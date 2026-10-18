@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brandon Pautler – Electrical Engineer</title>
+<meta name="description" content="Brandon Pautler, electrical engineering student at Queen's University. Hardware design, PCBs, embedded systems and field engineering.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #EDF0EC;
+  --sheet: #F7F8F5;
+  --ink: #1C2321;
+  --muted: #56625E;
+  --line: #B5BDB8;
+  --red: #C23A22;
+  --led-off: #D3D8D4;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #131817;
+    --sheet: #1A201F;
+    --ink: #E3E7E4;
+    --muted: #9AA6A2;
+    --line: #3A4542;
+    --red: #EE6A50;
+    --led-off: #2C3533;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.0625rem/1.6 "Barlow", system-ui, sans-serif;
+}
+a { color: inherit; text-decoration-color: var(--red); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { color: var(--red); }
+a:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+/* Hero */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: center;
+  padding: 72px 0 56px;
+}
+h1 {
+  font: 700 clamp(3.4rem, 9vw, 6.5rem)/0.9 "Barlow Condensed", sans-serif;
+  letter-spacing: -0.01em;
+  margin: 0 0 28px;
+}
+.intro { font-size: 1.25rem; line-height: 1.5; max-width: 34ch; margin: 0 0 28px; }
+.links { display: flex; flex-wrap: wrap; gap: 12px 28px; padding: 0; margin: 0; list-style: none; font-weight: 600; }
+.board-fig { margin: 0; }
+.board-fig svg { width: 100%; height: auto; display: block; }
+.board-fig figcaption { color: var(--muted); font-size: 0.95rem; margin-top: 10px; max-width: 46ch; }
+.pcb { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.5; }
+.hole { fill: var(--paper); stroke: var(--ink); stroke-width: 1.2; }
+.trace { fill: none; stroke: var(--line); stroke-width: 1; }
+.chip { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.pin { stroke: var(--ink); stroke-width: 1; }
+.led { fill: var(--led-off); stroke: var(--ink); stroke-width: 0.6; transition: fill 0.5s ease-out; }
+.led.on { fill: var(--red); transition: none; }
+.anno { fill: var(--red); font: 500 13px "Barlow Condensed", sans-serif; }
+.anno-line { stroke: var(--red); stroke-width: 1; fill: none; }
+
+/* Sheets */
+.sheet {
+  background: var(--sheet);
+  border: 1.5px solid var(--ink);
+  margin: 0 0 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+}
+.sheet-body { padding: 36px 40px 40px; border-right: 1.5px solid var(--ink); }
+h2 {
+  font: 600 clamp(1.9rem, 4vw, 2.6rem)/1.05 "Barlow Condensed", sans-serif;
+  margin: 0 0 18px;
+  max-width: 24ch;
+}
+.lede { font-size: 1.15rem; max-width: 62ch; margin: 0 0 24px; }
+.parts { margin: 0; max-width: 64ch; }
+.parts dt { font-weight: 600; margin-top: 18px; }
+.parts dd { margin: 4px 0 0; }
+.result { margin: 26px 0 0; padding-left: 16px; border-left: 3px solid var(--red); max-width: 62ch; }
+.photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 28px; }
+.photos figure { margin: 0; }
+.photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; border: 1px solid var(--line); }
+.photos figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 6px; }
+.photos figure.missing { display: none; }
+
+/* Title block: what an engineering drawing uses to identify the sheet */
+.title-block { display: flex; flex-direction: column; font-size: 0.95rem; }
+.title-block div { padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.title-block div:last-child { border-bottom: 0; flex: 1; }
+.title-block dt { color: var(--muted); font-size: 0.85rem; }
+.title-block dd { margin: 2px 0 0; font-weight: 500; }
+.status-live { color: var(--red); }
+
+/* Footer */
+.about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; padding: 24px 0 72px; }
+.about h2 { font-size: 1.8rem; }
+.about p { margin: 0 0 12px; max-width: 52ch; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; padding-top: 48px; gap: 32px; }
+  .sheet { grid-template-columns: 1fr; }
+  .sheet-body { border-right: 0; border-bottom: 1.5px solid var(--ink); padding: 28px 22px 30px; }
+  .title-block { display: grid; grid-template-columns: 1fr 1fr; }
+  .title-block div { border-right: 1px solid var(--line); }
+  .title-block div:nth-child(2n) { border-right: 0; }
+  .about { grid-template-columns: 1fr; gap: 8px; }
+}
+@media (max-width: 520px) {
+  .wrap { padding: 0 16px; }
+  .title-block { grid-template-columns: 1fr; }
+  .title-block div { border-right: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .led { transition: none; }
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header class="hero">
+    <div>
+      <h1>Brandon Pautler</h1>
+      <p class="intro">Electrical engineering student at Queen’s University, graduating April 2027. I design hardware, build it, and make it work.</p>
+      <ul class="links">
+        <li><a href="Brandon_Pautler_Resume.pdf">Résumé (PDF)</a></li>
+        <li><a href="mailto:bpautler@bell.net">bpautler@bell.net</a></li>
+        <li><a href="https://www.linkedin.com/in/brandon-pautler">LinkedIn</a></li>
+      </ul>
+    </div>
+    <figure class="board-fig">
+      <svg id="board" viewBox="0 0 460 400" role="img" aria-labelledby="board-cap"></svg>
+      <figcaption id="board-cap">A sketch of the LED illumination board I designed for a low-cost microscope, lighting one LED at a time the way it does during image capture.</figcaption>
+    </figure>
+  </header>
+
+  <article class="sheet">
+    <div class="sheet-body">
+      <h2>A $150 microscope that can see malaria</h2>
+      <p class="lede">Fourier ptychography builds one sharp image out of many blurry ones, each lit from a different angle. Our three-person team built a 3D-printed version around a Raspberry Pi, aimed at malaria diagnosis where a lab microscope isn’t affordable. I owned the hardware.</p>
+      <dl class="parts">
+        <dt>LED illumination board</dt>
+        <dd>Off-the-shelf LED matrices flickered even at full brightness, which ruins image capture. I designed a 2-layer board with about 150 addressable LEDs in a ring layout, an STM32 and 3.3 V to 5 V level shifting, sized to sit on top of the Pi. It went through three revisions.</dd>
+        <dt>Firmware and control</dt>
+        <dd>C firmware on the STM32 and a Python library on the Pi talk both ways over SPI, setting LED patterns and brightness and stepping through lighting sequences in sync with the camera.</dd>
+        <dt>Microscope body</dt>
+        <dd>I redesigned the 3D-printed body in Onshape over five-plus iterations to line up the lens, sensor and aperture, and worked out the aperture size so it takes in light from the outermost LEDs while blocking reflections from the rest of the board.</dd>
+      </dl>
+      <p class="result">We imaged malaria parasites inside red blood cells, and later cut the parts cost to about $150 CAD. The work is part of a <a href="https://doi.org/10.1117/12.3003269">paper in Proc. SPIE (2024)</a>, where I’m a co-author.</p>
+      <div class="photos">
+        <figure><img src="images/microscope.jpg" alt="The assembled 3D-printed microscope on a Raspberry Pi" loading="lazy"><figcaption>The assembled microscope</figcaption></figure>
+        <figure><img src="images/led-board.jpg" alt="The custom LED illumination board" loading="lazy"><figcaption>Final LED board</figcaption></figure>
+        <figure><img src="images/led-board-revisions.jpg" alt="Three revisions of the LED board side by side" loading="lazy"><figcaption>Board revisions</figcaption></figure>
+      </div>
+    </div>
+    <dl class="title-block">
+      <div><dt>Where</dt><dd>Robarts Research Institute, Western University</dd></div>
+      <div><dt>My part</dt><dd>Hardware, firmware, CAD, imaging tests</dd></div>
+      <div><dt>When</dt><dd>Summers 2023 and 2024</dd></div>
+      <div><dt>Status</dt><dd>Published, SPIE 2024</dd></div>
+    </dl>
+  </article>
+
+  <article class="sheet">
+    <div class="sheet-body">
+      <h2>A touchscreen that works inside an MRI scanner</h2>
+      <p class="lede">A psychology lab at Queen’s wants people inside an MRI scanner to use a touchscreen during fMRI studies. Anything magnetic is a problem in there, so the tablet runs on battery and gets its video and touch data over fibre optics from the control room.</p>
+      <dl class="parts">
+        <dt>Air-core inductors</dt>
+        <dd>Ferrite-core inductors saturate in the scanner’s field, and nobody sells air-core parts at the values we need. I’m designing our own, sized with Wheeler’s formula.</dd>
+        <dt>Display driver board</dt>
+        <dd>I’m replacing the ferrous components on a commercial display’s driver board with non-magnetic parts.</dd>
+        <dt>Enclosure</dt>
+        <dd>A 3D-printed case for the display, electronics and battery, with no metal fasteners or framing.</dd>
+      </dl>
+      <div class="photos">
+        <figure><img src="images/mri-inductor.jpg" alt="A hand-wound air-core inductor" loading="lazy"><figcaption>Air-core inductor</figcaption></figure>
+        <figure><img src="images/mri-enclosure.jpg" alt="The 3D-printed tablet enclosure" loading="lazy"><figcaption>Enclosure</figcaption></figure>
+      </div>
+    </div>
+    <dl class="title-block">
+      <div><dt>Where</dt><dd>Queen’s University capstone, team of four</dd></div>
+      <div><dt>My part</dt><dd>Inductors, display board, enclosure</dd></div>
+      <div><dt>When</dt><dd>September 2026 to now</dd></div>
+      <div><dt>Status</dt><dd class="status-live">In progress</dd></div>
+    </dl>
+  </article>
+
+  <article class="sheet">
+    <div class="sheet-body">
+      <h2>Fourteen months at a nuclear plant</h2>
+      <p class="lede">I supported reactor control instrumentation and Cobalt-60 medical isotope processing equipment. Most of the specifics are confidential, but here’s the short version.</p>
+      <dl class="parts">
+        <dt>Faulty temperature readings</dt>
+        <dd>Traced bad RTD readings in the Reactor Regulating System, a safety-critical control system, using plant trend data and system drawings. The replacement I recommended fixed them.</dd>
+        <dt>Stopped equipment</dt>
+        <dd>A failure in the Cobalt-60 processing equipment forced operators to do a critical step by hand, then halted processing. The original part was obsolete, so I found a qualified substitute and planned the replacement with maintenance.</dd>
+        <dt>Analysis tools</dt>
+        <dd>Built tools in Seeq to bring out plant conditions that weren’t directly visible in the available data.</dd>
+        <dt>In the field</dt>
+        <dd>More than 20 equipment walkdowns, over 10 of them inside the reactor building.</dd>
+      </dl>
+    </div>
+    <dl class="title-block">
+      <div><dt>Where</dt><dd>Ontario Power Generation, Pickering</dd></div>
+      <div><dt>Role</dt><dd>System engineering intern, reactor control</dd></div>
+      <div><dt>When</dt><dd>May 2025 to June 2026</dd></div>
+      <div><dt>Status</dt><dd>Complete</dd></div>
+    </dl>
+  </article>
+
+  <article class="sheet">
+    <div class="sheet-body">
+      <h2>Fixing my headphones</h2>
+      <p class="lede">I snapped the cable on my favourite wired headphones. Inside were three very thin conductors. I soldered them back together, designed and 3D printed a mold to keep the joints apart, filled it with resin, then sanded the result into a solid housing. They work again.</p>
+      <div class="photos">
+        <figure><img src="images/headphones-mold.jpg" alt="The 3D-printed mold around the soldered joint" loading="lazy"><figcaption>The mold</figcaption></figure>
+        <figure><img src="images/headphones-done.jpg" alt="The finished resin repair on the headphone cable" loading="lazy"><figcaption>Finished repair</figcaption></figure>
+      </div>
+    </div>
+    <dl class="title-block">
+      <div><dt>Where</dt><dd>Home</dd></div>
+      <div><dt>My part</dt><dd>All of it</dd></div>
+      <div><dt>When</dt><dd>February 2025</dd></div>
+      <div><dt>Status</dt><dd>Still working</dd></div>
+    </dl>
+  </article>
+
+  <footer class="about">
+    <div>
+      <h2>Get in touch</h2>
+      <p>I’m looking for a full-time role starting after April 2027, ideally designing, building or testing hardware.</p>
+      <p><a href="mailto:bpautler@bell.net">bpautler@bell.net</a> &nbsp;·&nbsp; <a href="https://www.linkedin.com/in/brandon-pautler">LinkedIn</a> &nbsp;·&nbsp; <a href="Brandon_Pautler_Resume.pdf">Résumé</a></p>
+    </div>
+    <div>
+      <h2>Outside of work</h2>
+      <p>Ice hockey, hiking, guitar, landscape oil painting, leatherworking and cooking.</p>
+    </div>
+  </footer>
+</main>
+
+<script>
+// Hide photo slots whose image file hasn't been added yet
+document.querySelectorAll('.photos img').forEach(function (img) {
+  function hide() { img.closest('figure').classList.add('missing'); }
+  if (img.complete && img.naturalWidth === 0) hide();
+  img.addEventListener('error', hide);
+});
+
+// Draw the LED board
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  var svg = document.getElementById('board');
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(e);
+    return e;
+  }
+  var cx = 200, cy = 200;
+  el('rect', { x: 20, y: 30, width: 360, height: 340, rx: 14, class: 'pcb' });
+  [[44, 54], [356, 54], [44, 346], [356, 346]].forEach(function (p) {
+    el('circle', { cx: p[0], cy: p[1], r: 8, class: 'hole' });
+  });
+  // Microcontroller and a few traces
+  el('rect', { x: 320, y: 300, width: 24, height: 24, class: 'chip' });
+  for (var i = 0; i < 4; i++) {
+    var o = 324 + i * 5.3;
+    el('line', { x1: o, y1: 324, x2: o, y2: 328, class: 'pin' });
+    el('line', { x1: 344, y1: 304 + i * 5.3, x2: 348, y2: 304 + i * 5.3, class: 'pin' });
+  }
+  el('path', { d: 'M348 304 H368', class: 'trace' });
+  el('path', { d: 'M348 309.3 H368', class: 'trace' });
+  el('path', { d: 'M324 328 V362', class: 'trace' });
+  el('path', { d: 'M329.3 328 V362', class: 'trace' });
+
+  // Concentric rings of LEDs
+  var rings = [[0, 1], [26, 8], [50, 14], [74, 20], [98, 26], [122, 32], [146, 38]];
+  var leds = [];
+  rings.forEach(function (r) {
+    for (var n = 0; n < r[1]; n++) {
+      var a = (n / r[1]) * Math.PI * 2 - Math.PI / 2;
+      var x = cx + r[0] * Math.cos(a), y = cy + r[0] * Math.sin(a);
+      if (x < 34 || x > 366 || y < 44 || y > 356) continue;
+      leds.push(el('circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: 4.2, class: 'led' }));
+    }
+  });
+
+  // Annotation in red pen, like a markup on a drawing
+  el('circle', { cx: 318, cy: 128, r: 3, class: 'anno-line' });
+  el('path', { d: 'M320 126 L394 82 H452', class: 'anno-line' });
+  var t = el('text', { x: 396, y: 76, class: 'anno' }); t.textContent = 'Ring layout';
+  el('path', { d: 'M346 320 L394 352 H452', class: 'anno-line' });
+  var t2 = el('text', { x: 396, y: 346, class: 'anno' }); t2.textContent = 'STM32';
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) { leds[0].classList.add('on'); return; }
+  var k = 0, timer = null;
+  function step() {
+    leds[(k + leds.length - 1) % leds.length].classList.remove('on');
+    leds[k].classList.add('on');
+    k = (k + 1) % leds.length;
+  }
+  function start() { if (!timer) timer = setInterval(step, 70); }
+  function stop() { clearInterval(timer); timer = null; }
+  new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }).observe(svg);
+})();
+</script>
+</body>
+</html>
