@@ -148,6 +148,9 @@ p:last-child { margin-bottom: 0; }
 .chapter-head { max-width: 40rem; }
 .chapter-head h2 { font-size: clamp(2.2rem, 5.2vw, 4.4rem); }
 .mri .steps { padding-top: 10vh; }
+.mri .split { grid-template-columns: minmax(0, 36vw) minmax(0, 32vw); column-gap: 10vw; padding-left: 8vw; }
+.mri-media { position: sticky; top: max(84px, calc(50vh - 14vw)); }
+.mri-media .photo { width: 100%; margin: 0; }
 
 /* Bridges between chapters */
 .bridge { height: 55vh; display: grid; place-items: center; text-align: center; padding: 0 16px; }
@@ -187,7 +190,7 @@ p:last-child { margin-bottom: 0; }
   opacity: var(--lamp); pointer-events: none;
 }
 .bench {
-  position: absolute; left: 3vw; right: 3vw; top: 70svh; height: 60svh;
+  position: absolute; left: 3vw; right: 3vw; top: 62svh; height: 60svh;
   transform: translateY(calc((1 - var(--rise)) * 45svh));
 }
 .surface {
@@ -233,8 +236,8 @@ p:last-child { margin-bottom: 0; }
 }
 .frame img { width: 100%; height: auto; display: block; }
 .frame:not(.missing) .pic { aspect-ratio: auto; }
-.frame.wide { width: clamp(200px, min(50vw, 84svh), 960px); }
-.frame.small { width: clamp(110px, min(22vw, 40svh), 440px); }
+.frame.wide { width: clamp(200px, min(50vw, 78svh), 960px); }
+.frame.small { width: clamp(110px, min(22vw, 38svh), 440px); }
 .frame .ph {
   display: none; position: absolute; inset: 0; place-items: center; text-align: center; padding: 10px;
   font: 400 0.72rem/1.4 var(--mono); color: var(--faint); letter-spacing: 0.04em;
@@ -250,11 +253,16 @@ p:last-child { margin-bottom: 0; }
   position: absolute; left: 50%; top: calc(100% + 1svh); transform: translateX(-50%) rotate(calc(var(--tilt) * -1));
   white-space: nowrap; font: 500 0.8rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
 }
-.bridge.hp { height: auto; min-height: 90vh; padding: 12vh clamp(16px, 4vw, 64px); }
-.hp-text { width: min(100%, 760px); text-align: left; }
-.hp-text h2 { font-size: clamp(2rem, 4vw, 3.4rem); margin-bottom: 14px; }
-.hp-text p { font-size: 1.1rem; }
-.hp-text .specs { margin-top: 18px; }
+.hp-text {
+  position: absolute; left: 7%; right: 7%; top: 11.6svh; z-index: 2;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); column-gap: clamp(20px, 3vw, 48px); align-items: center;
+  padding: clamp(16px, 2.2vh, 26px) clamp(20px, 2.6vw, 36px);
+  opacity: var(--txt); transform: translateY(calc((1 - var(--txt)) * 20px));
+}
+.hp-text h2 { font-size: clamp(1.7rem, 2.4vw, 2.6rem); margin-bottom: 8px; }
+.hp-text .kicker { margin-bottom: 8px; }
+.hp-text > p { font-size: 1.08rem; margin: 0; }
+.hp-text .specs { grid-template-columns: auto auto; justify-content: start; gap: 4px 32px; }
 
 /* Contact */
 .contact { position: relative; padding: 8vh clamp(16px, 5vw, 72px) 10vh; display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(24px, 5vw, 80px); align-items: end; }
@@ -272,8 +280,11 @@ p:last-child { margin-bottom: 0; }
   h3 { font-size: 1.7rem; }
   .steps { gap: 10vh; padding: 8vh 0 14vh; max-width: none; }
   .mri .steps { padding-top: 6vh; }
+  .mri .split { grid-template-columns: 1fr; padding-left: 0; }
+  .mri-media { display: none; }
+  .hp-text { display: block; left: 2vw; right: 2vw; top: -63svh; padding: 18px; }
   .hp-text h2 { font-size: 1.9rem; margin-bottom: 8px; }
-  .hp-text p { font-size: 0.95rem; line-height: 1.5; }
+  .hp-text > p { font-size: 0.95rem; line-height: 1.5; margin-top: 10px; }
   .items { padding-left: 0; gap: 14px; }
   .frame.small { width: min(31vw, 170px); }
   .frame.wide { width: min(60vw, 360px); }
@@ -385,7 +396,7 @@ p:last-child { margin-bottom: 0; }
         <div class="steps">
           <div class="glass rv">
             <p class="lede">A psychology lab at Queen’s wants people inside an MRI scanner to use a touchscreen during fMRI studies. Anything magnetic is a problem in there, so the tablet runs on battery and gets its video and touch data over fibre optics from the control room.</p>
-            <figure class="card-photo"><img src="images/mri-fibre-test.jpg" alt="Our capstone test bench: an HDMI-over-fibre extender with yellow fibre cable, an oscilloscope, a bench power supply and a function generator" width="1600" height="1200"><figcaption>Testing our fibre optic converters</figcaption></figure>
+            <figure class="card-photo mobile-only"><img src="images/mri-fibre-test.jpg" alt="Our capstone test bench: an HDMI-over-fibre extender with yellow fibre cable, an oscilloscope, a bench power supply and a function generator" width="1600" height="1200"><figcaption>Testing our fibre optic converters</figcaption></figure>
           </div>
           <div class="glass rv">
             <p class="kicker">Magnetics</p>
@@ -412,21 +423,16 @@ p:last-child { margin-bottom: 0; }
           </div>
         </div>
       </div>
-      <div aria-hidden="true"></div>
+      <div class="mri-media">
+        <figure class="photo rv">
+          <img src="images/mri-fibre-test.jpg" alt="Our capstone test bench: an HDMI-over-fibre extender with yellow fibre cable, an oscilloscope, a bench power supply and a function generator" width="1600" height="1200">
+          <figcaption>Testing our fibre optic converters</figcaption>
+        </figure>
+      </div>
     </div>
   </section>
 
-  <div class="bridge hp" id="bridge2">
-    <div class="hp-text glass rv">
-      <p class="kicker">03 — Home, February 2025</p>
-      <h2>Fixing my headphones</h2>
-      <p>I snapped the cable on my favourite wired headphones. Inside were three very thin conductors. I soldered them back together, designed and 3D printed a mold to keep the joints apart, filled it with resin, then sanded the result into a solid housing. They work again.</p>
-      <dl class="specs">
-        <div><dt>My part</dt><dd>All of it</dd></div>
-        <div><dt>Status</dt><dd>Complete</dd></div>
-      </dl>
-    </div>
-  </div>
+  <div class="bridge" id="bridge2"><p class="rv">And one fix at home.</p></div>
 
   <section class="bench-sec" id="bench" aria-label="Fixing my headphones">
     <div class="stage">
@@ -435,6 +441,17 @@ p:last-child { margin-bottom: 0; }
         <div class="surface"></div>
         <div class="edge"></div>
         <div class="leg l"></div><div class="leg r"></div>
+        <div class="hp-text glass">
+          <div class="hp-head">
+            <p class="kicker">03 — Home, February 2025</p>
+            <h2>Fixing my headphones</h2>
+            <dl class="specs">
+              <div><dt>My part</dt><dd>All of it</dd></div>
+              <div><dt>Status</dt><dd>Complete</dd></div>
+            </dl>
+          </div>
+          <p>I snapped the cable on my favourite wired headphones. Inside were three very thin conductors. I soldered them back together, designed and 3D printed a mold to keep the joints apart, filled it with resin, then sanded the result into a solid housing. They work again.</p>
+        </div>
         <div class="items">
           <figure class="frame wide">
             <div class="pic"><img src="images/headphones-done.jpg" alt="The repaired headphones, with a close-up of the sanded resin housing over the cable joint" width="1600" height="1006"><div class="ph">Photo: the repair</div></div>
@@ -493,14 +510,11 @@ p:last-child { margin-bottom: 0; }
 
   // ---------- Microscope photo swaps to the LED board while those cards are centred ----------
   var figs = { scope: document.querySelector('.photo.scope'), board: document.querySelector('.photo.board'), cad: document.querySelector('.photo.cad') };
-  var mediaCards = Array.prototype.slice.call(document.querySelectorAll('[data-media]'));
   var showing = 'scope';
+  var stepCards = Array.prototype.slice.call(document.querySelectorAll('#micro .steps > .glass'));
   function mediaSwap() {
-    var mid = window.innerHeight / 2, want = 'scope', best = 1e9;
-    mediaCards.forEach(function (c) {
-      var r = c.getBoundingClientRect();
-      if (r.top < mid + 120 && r.bottom > mid - 120) { var d = Math.abs((r.top + r.bottom) / 2 - mid); if (d < best) { best = d; want = c.getAttribute('data-media'); } }
-    });
+    var line = window.innerHeight * 0.62, want = 'scope';
+    stepCards.forEach(function (c) { if (c.getBoundingClientRect().top < line) want = c.getAttribute('data-media') || 'scope'; });
     if (want !== showing) {
       showing = want;
       for (var k in figs) { var on = k === want; figs[k].classList.toggle('off', !on); figs[k].setAttribute('aria-hidden', on ? 'false' : 'true'); }
@@ -819,8 +833,8 @@ p:last-child { margin-bottom: 0; }
     var grow = smooth(0.3, 1, m) * (1 - smooth(0, 0.7, fo));
     var coilA = smooth(0.2, 0.55, m) * (1 - smooth(0.2, 0.8, fo));
     if (grow > 0.001 || coilA > 0.001) {
-      var S = mn * (M.wide ? 0.08 : 0.075);
-      var fcx = M.wide ? lerp(w / 2, w * 0.72, smooth(0.4, 1, m)) : w / 2, fcy = h / 2;
+      var S = mn * (M.wide ? 0.066 : 0.075);
+      var fcx = M.wide ? w * 0.528 : w / 2, fcy = h / 2;
       if (!reduce) rot += dt * 0.12;
       var tilt = 0.32, ct = Math.cos(tilt), st = Math.sin(tilt);
       var grad = ctx.createLinearGradient(0, fcy - 7 * S, 0, fcy + 7 * S);
