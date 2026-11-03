@@ -137,8 +137,13 @@ p:last-child { margin-bottom: 0; }
 .extra figure { margin: 0; }
 .extra img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block; border-radius: 6px; }
 .extra .mobile-only img { aspect-ratio: auto; }
+.extra .mobile-only:only-child, .extra figure.wide-fig { grid-column: 1 / -1; }
+.photo.cad img { background: #fff; }
 .extra figcaption { font: 400 0.72rem/1.3 var(--mono); color: var(--muted); margin-top: 6px; }
 .extra figure.missing { display: none; }
+.card-photo { margin: 20px 0 0; }
+.card-photo img { width: 100%; height: auto; display: block; border-radius: 8px; }
+.card-photo figcaption { font: 400 0.78rem/1.4 var(--mono); color: var(--muted); margin-top: 8px; letter-spacing: 0.03em; }
 
 .chapter-head { max-width: 40rem; }
 .chapter-head h2 { font-size: clamp(2.2rem, 5.2vw, 4.4rem); }
@@ -146,7 +151,7 @@ p:last-child { margin-bottom: 0; }
 
 /* Bridges between chapters */
 .bridge { height: 55vh; display: grid; place-items: center; text-align: center; padding: 0 16px; }
-.bridge p { font: 500 clamp(1.3rem, 2.6vw, 2rem)/1.3 var(--cond); color: var(--ink); text-shadow: 0 2px 18px rgba(10, 8, 18, 0.95), 0 0 4px rgba(10, 8, 18, 0.9); max-width: 26ch; letter-spacing: 0.01em; }
+.bridge > p { font: 500 clamp(1.3rem, 2.6vw, 2rem)/1.3 var(--cond); color: var(--ink); text-shadow: 0 2px 18px rgba(10, 8, 18, 0.95), 0 0 4px rgba(10, 8, 18, 0.9); max-width: 26ch; letter-spacing: 0.01em; }
 
 /* Bench scene */
 .bench-sec { height: 195vh; position: relative; }
@@ -209,8 +214,8 @@ p:last-child { margin-bottom: 0; }
 .leg.l { left: 5%; } .leg.r { right: 5%; }
 .items {
   position: absolute; left: 0; right: 0; bottom: calc(100% - 4.2svh);
-  display: flex; justify-content: flex-end; align-items: flex-end; gap: clamp(14px, 2.6vw, 48px);
-  padding: 0 4.5% 0 40%;
+  display: flex; justify-content: center; align-items: flex-end; gap: clamp(14px, 3vw, 56px);
+  padding: 0 4%;
 }
 .frame {
   margin: 0; position: relative; width: clamp(130px, 19vw, 300px);
@@ -228,8 +233,8 @@ p:last-child { margin-bottom: 0; }
 }
 .frame img { width: 100%; height: auto; display: block; }
 .frame:not(.missing) .pic { aspect-ratio: auto; }
-.frame.wide { width: clamp(200px, 37vw, 720px); }
-.frame.small { width: clamp(110px, 15vw, 290px); }
+.frame.wide { width: clamp(200px, min(50vw, 84svh), 960px); }
+.frame.small { width: clamp(110px, min(22vw, 40svh), 440px); }
 .frame .ph {
   display: none; position: absolute; inset: 0; place-items: center; text-align: center; padding: 10px;
   font: 400 0.72rem/1.4 var(--mono); color: var(--faint); letter-spacing: 0.04em;
@@ -243,12 +248,10 @@ p:last-child { margin-bottom: 0; }
 }
 .frame figcaption {
   position: absolute; left: 50%; top: calc(100% + 1svh); transform: translateX(-50%) rotate(calc(var(--tilt) * -1));
-  white-space: nowrap; font: 500 0.7rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  white-space: nowrap; font: 500 0.8rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
 }
-.hp-text {
-  position: absolute; left: clamp(16px, 4vw, 64px); top: 14svh; width: min(35vw, 540px);
-  opacity: var(--txt); transform: translateY(calc((1 - var(--txt)) * 24px));
-}
+.bridge.hp { height: auto; min-height: 90vh; padding: 12vh clamp(16px, 4vw, 64px); }
+.hp-text { width: min(100%, 760px); text-align: left; }
 .hp-text h2 { font-size: clamp(2rem, 4vw, 3.4rem); margin-bottom: 14px; }
 .hp-text p { font-size: 1.1rem; }
 .hp-text .specs { margin-top: 18px; }
@@ -263,19 +266,17 @@ p:last-child { margin-bottom: 0; }
   .split { grid-template-columns: 1fr; }
   .sticky-media { position: relative; top: auto; transform: none; }
   .photo { width: 100%; max-width: 640px; margin: 0 auto; }
-  .media-stack > .photo.board { display: none; }
+  .media-stack > .photo.board, .media-stack > .photo.cad { display: none; }
   .mobile-only { display: block; }
   .glass { font-size: 1.05rem; }
   h3 { font-size: 1.7rem; }
   .steps { gap: 10vh; padding: 8vh 0 14vh; max-width: none; }
   .mri .steps { padding-top: 6vh; }
-  .hp-text { left: 16px; right: 16px; width: auto; top: 13svh; padding: 18px; }
   .hp-text h2 { font-size: 1.9rem; margin-bottom: 8px; }
   .hp-text p { font-size: 0.95rem; line-height: 1.5; }
-  .hp-text .specs { display: none; }
   .items { padding-left: 0; gap: 14px; }
-  .frame.small { width: min(28vw, 150px); }
-  .frame.wide { width: min(58vw, 330px); }
+  .frame.small { width: min(31vw, 170px); }
+  .frame.wide { width: min(60vw, 360px); }
   .items { justify-content: center; padding: 0 8px; }
   .bench { top: 76svh; }
   .contact { grid-template-columns: 1fr; }
@@ -329,6 +330,10 @@ p:last-child { margin-bottom: 0; }
             <img src="images/led-board.jpg" alt="The LED board mounted on the Raspberry Pi, next to a quarter for scale" width="1270" height="675">
             <figcaption>LED Board V0.2.1 mounted on the Raspberry Pi, quarter for scale</figcaption>
           </figure>
+          <figure class="photo cad off" aria-hidden="true">
+            <img src="images/microscope-cad.jpg" alt="Onshape renders of three 3D-printed parts from the microscope body" width="1800" height="1000">
+            <figcaption>Parts I designed in Onshape for the microscope body</figcaption>
+          </figure>
         </div>
       </div>
       <div class="steps">
@@ -349,12 +354,13 @@ p:last-child { margin-bottom: 0; }
           <h3>Firmware and control</h3>
           <p>C firmware on the STM32 and a Python library on the Pi talk both ways over SPI, setting LED patterns and brightness and stepping through lighting sequences in sync with the camera.</p>
         </div>
-        <div class="glass rv">
+        <div class="glass rv" data-media="cad">
           <p class="kicker">Mechanical</p>
           <h3>Microscope body</h3>
           <p>I redesigned the 3D-printed body in Onshape over five-plus iterations to line up the lens, sensor and aperture, and worked out the aperture size so it takes in light from the outermost LEDs while blocking reflections from the rest of the board.</p>
+          <div class="extra"><figure class="mobile-only"><img src="images/microscope-cad.jpg" alt="Onshape renders of three 3D-printed parts from the microscope body" width="1800" height="1000"><figcaption>Parts I designed in Onshape</figcaption></figure></div>
         </div>
-        <div class="glass rv">
+        <div class="glass rv" data-media="cad">
           <p class="result">We imaged malaria parasites inside red blood cells, and later cut the parts cost to about $150 CAD. The work is part of a <a href="https://doi.org/10.1117/12.3003269">paper in Proc. SPIE (2024)</a>, where I’m a co-author.</p>
           <dl class="specs" style="margin-top:22px">
             <div><dt>Where</dt><dd>Robarts Research Institute, Western University</dd></div>
@@ -379,6 +385,7 @@ p:last-child { margin-bottom: 0; }
         <div class="steps">
           <div class="glass rv">
             <p class="lede">A psychology lab at Queen’s wants people inside an MRI scanner to use a touchscreen during fMRI studies. Anything magnetic is a problem in there, so the tablet runs on battery and gets its video and touch data over fibre optics from the control room.</p>
+            <figure class="card-photo"><img src="images/mri-fibre-test.jpg" alt="Our capstone test bench: an HDMI-over-fibre extender with yellow fibre cable, an oscilloscope, a bench power supply and a function generator" width="1600" height="1200"><figcaption>Testing our fibre optic converters</figcaption></figure>
           </div>
           <div class="glass rv">
             <p class="kicker">Magnetics</p>
@@ -409,20 +416,21 @@ p:last-child { margin-bottom: 0; }
     </div>
   </section>
 
-  <div class="bridge" id="bridge2"><p class="rv">And one fix at home.</p></div>
+  <div class="bridge hp" id="bridge2">
+    <div class="hp-text glass rv">
+      <p class="kicker">03 — Home, February 2025</p>
+      <h2>Fixing my headphones</h2>
+      <p>I snapped the cable on my favourite wired headphones. Inside were three very thin conductors. I soldered them back together, designed and 3D printed a mold to keep the joints apart, filled it with resin, then sanded the result into a solid housing. They work again.</p>
+      <dl class="specs">
+        <div><dt>My part</dt><dd>All of it</dd></div>
+        <div><dt>Status</dt><dd>Complete</dd></div>
+      </dl>
+    </div>
+  </div>
 
   <section class="bench-sec" id="bench" aria-label="Fixing my headphones">
     <div class="stage">
       <div class="lamp" aria-hidden="true"><div class="bar"></div><div class="strip"></div><div class="cone"></div></div>
-      <div class="hp-text glass">
-        <p class="kicker">03 — Home, February 2025</p>
-        <h2>Fixing my headphones</h2>
-        <p>I snapped the cable on my favourite wired headphones. Inside were three very thin conductors. I soldered them back together, designed and 3D printed a mold to keep the joints apart, filled it with resin, then sanded the result into a solid housing. They work again.</p>
-        <dl class="specs">
-          <div><dt>My part</dt><dd>All of it</dd></div>
-          <div><dt>Status</dt><dd>Still working</dd></div>
-        </dl>
-      </div>
       <div class="bench">
         <div class="surface"></div>
         <div class="edge"></div>
@@ -484,16 +492,18 @@ p:last-child { margin-bottom: 0; }
   }
 
   // ---------- Microscope photo swaps to the LED board while those cards are centred ----------
-  var scopeFig = document.querySelector('.photo.scope'), boardFig = document.querySelector('.photo.board');
-  var boardCards = Array.prototype.slice.call(document.querySelectorAll('[data-media="board"]'));
-  var showingBoard = false;
+  var figs = { scope: document.querySelector('.photo.scope'), board: document.querySelector('.photo.board'), cad: document.querySelector('.photo.cad') };
+  var mediaCards = Array.prototype.slice.call(document.querySelectorAll('[data-media]'));
+  var showing = 'scope';
   function mediaSwap() {
-    var mid = window.innerHeight / 2, want = false;
-    boardCards.forEach(function (c) { var r = c.getBoundingClientRect(); if (r.top < mid + 120 && r.bottom > mid - 120) want = true; });
-    if (want !== showingBoard) {
-      showingBoard = want;
-      boardFig.classList.toggle('off', !want); scopeFig.classList.toggle('off', want);
-      boardFig.setAttribute('aria-hidden', want ? 'false' : 'true'); scopeFig.setAttribute('aria-hidden', want ? 'true' : 'false');
+    var mid = window.innerHeight / 2, want = 'scope', best = 1e9;
+    mediaCards.forEach(function (c) {
+      var r = c.getBoundingClientRect();
+      if (r.top < mid + 120 && r.bottom > mid - 120) { var d = Math.abs((r.top + r.bottom) / 2 - mid); if (d < best) { best = d; want = c.getAttribute('data-media'); } }
+    });
+    if (want !== showing) {
+      showing = want;
+      for (var k in figs) { var on = k === want; figs[k].classList.toggle('off', !on); figs[k].setAttribute('aria-hidden', on ? 'false' : 'true'); }
     }
   }
   window.addEventListener('scroll', mediaSwap, { passive: true });
