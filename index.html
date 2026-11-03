@@ -70,7 +70,8 @@ main, .topbar { position: relative; z-index: 1; }
   backdrop-filter: blur(12px) saturate(140%);
   border: 1px solid var(--glass-line);
   border-radius: 14px;
-  padding: clamp(20px, 2.4vw, 32px);
+  padding: clamp(22px, 2.8vw, 40px);
+  font-size: 1.14rem; line-height: 1.6;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 .kicker {
@@ -78,7 +79,7 @@ main, .topbar { position: relative; z-index: 1; }
   color: var(--pink); margin: 0 0 14px;
 }
 h2, h3 { font-family: var(--cond); font-weight: 600; line-height: 1.02; margin: 0; }
-h3 { font-size: 1.55rem; margin-bottom: 10px; letter-spacing: 0.005em; }
+h3 { font-size: 2rem; margin-bottom: 10px; letter-spacing: 0.005em; }
 p { margin: 0 0 12px; }
 p:last-child { margin-bottom: 0; }
 
@@ -110,19 +111,23 @@ p:last-child { margin-bottom: 0; }
 @keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
 
 /* Project chapters */
-.chapter { position: relative; padding: 10vh clamp(16px, 5vw, 72px); }
-.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 6vw, 110px); align-items: start; }
-.sticky-media { position: sticky; top: max(84px, calc(50vh - 11vw)); }
-.photo { margin: 0; width: min(33vw, 640px); margin-left: auto; }
+.chapter { position: relative; padding: 4vh clamp(16px, 4vw, 64px); }
+.split { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 72px); align-items: start; }
+.sticky-media { position: sticky; top: max(84px, calc(50vh - 14vw)); }
+.photo { margin: 0; width: min(44vw, 820px); margin-left: auto; }
+.media-stack { display: grid; }
+.media-stack > .photo { grid-area: 1 / 1; transition: opacity 0.6s ease; }
+.media-stack > .photo.off { opacity: 0; pointer-events: none; }
+.mobile-only { display: none; }
 .photo img {
   display: block; width: 100%; height: auto; border-radius: 6px;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 70px rgba(161, 92, 255, 0.28);
 }
 .photo figcaption { display: inline-block; font: 400 0.78rem/1.4 var(--mono); color: var(--muted); margin-top: 12px; letter-spacing: 0.03em; background: rgba(14, 13, 20, 0.7); padding: 4px 8px; border-radius: 4px; }
-.steps { display: flex; flex-direction: column; gap: 46vh; padding: 30vh 0 36vh; max-width: 560px; }
-.steps .lede { font-size: 1.2rem; line-height: 1.5; }
+.steps { display: flex; flex-direction: column; gap: 18vh; padding: 14vh 0 22vh; max-width: 720px; }
+.steps .lede { font-size: 1.32rem; line-height: 1.5; }
 .result { border-left: 3px solid var(--pink); padding-left: 16px; }
-.specs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; margin: 0; font-size: 0.95rem; }
+.specs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; margin: 0; font-size: 1rem; }
 .specs dt { font: 500 0.72rem/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
 .specs dd { margin: 4px 0 0; font-weight: 500; }
 .live { color: var(--pink); }
@@ -130,20 +135,21 @@ p:last-child { margin-bottom: 0; }
 @keyframes pulse { 50% { opacity: 0.35; } }
 .extra { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 18px; }
 .extra figure { margin: 0; }
-.extra img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; border-radius: 6px; }
+.extra img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block; border-radius: 6px; }
+.extra .mobile-only img { aspect-ratio: auto; }
 .extra figcaption { font: 400 0.72rem/1.3 var(--mono); color: var(--muted); margin-top: 6px; }
 .extra figure.missing { display: none; }
 
 .chapter-head { max-width: 40rem; }
 .chapter-head h2 { font-size: clamp(2.2rem, 5.2vw, 4.4rem); }
-.mri .steps { padding-top: 22vh; }
+.mri .steps { padding-top: 10vh; }
 
 /* Bridges between chapters */
-.bridge { height: 95vh; display: grid; place-items: center; text-align: center; padding: 0 16px; }
+.bridge { height: 55vh; display: grid; place-items: center; text-align: center; padding: 0 16px; }
 .bridge p { font: 500 clamp(1.3rem, 2.6vw, 2rem)/1.3 var(--cond); color: var(--ink); text-shadow: 0 2px 18px rgba(10, 8, 18, 0.95), 0 0 4px rgba(10, 8, 18, 0.9); max-width: 26ch; letter-spacing: 0.01em; }
 
 /* Bench scene */
-.bench-sec { height: 290vh; position: relative; }
+.bench-sec { height: 195vh; position: relative; }
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 .lamp {
   position: absolute; left: 50%; top: 0; width: min(80vw, 1150px); height: 24px;
@@ -203,8 +209,8 @@ p:last-child { margin-bottom: 0; }
 .leg.l { left: 5%; } .leg.r { right: 5%; }
 .items {
   position: absolute; left: 0; right: 0; bottom: calc(100% - 4.2svh);
-  display: flex; justify-content: center; align-items: flex-end; gap: clamp(18px, 5vw, 80px);
-  padding-left: 40%;
+  display: flex; justify-content: flex-end; align-items: flex-end; gap: clamp(14px, 2.6vw, 48px);
+  padding: 0 4.5% 0 40%;
 }
 .frame {
   margin: 0; position: relative; width: clamp(130px, 19vw, 300px);
@@ -222,7 +228,8 @@ p:last-child { margin-bottom: 0; }
 }
 .frame img { width: 100%; height: auto; display: block; }
 .frame:not(.missing) .pic { aspect-ratio: auto; }
-.frame.wide { width: clamp(170px, 27vw, 430px); }
+.frame.wide { width: clamp(200px, 37vw, 720px); }
+.frame.small { width: clamp(110px, 15vw, 290px); }
 .frame .ph {
   display: none; position: absolute; inset: 0; place-items: center; text-align: center; padding: 10px;
   font: 400 0.72rem/1.4 var(--mono); color: var(--faint); letter-spacing: 0.04em;
@@ -239,14 +246,15 @@ p:last-child { margin-bottom: 0; }
   white-space: nowrap; font: 500 0.7rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
 }
 .hp-text {
-  position: absolute; left: clamp(16px, 5vw, 72px); top: 15svh; width: min(36vw, 480px);
+  position: absolute; left: clamp(16px, 4vw, 64px); top: 14svh; width: min(35vw, 540px);
   opacity: var(--txt); transform: translateY(calc((1 - var(--txt)) * 24px));
 }
 .hp-text h2 { font-size: clamp(2rem, 4vw, 3.4rem); margin-bottom: 14px; }
+.hp-text p { font-size: 1.1rem; }
 .hp-text .specs { margin-top: 18px; }
 
 /* Contact */
-.contact { position: relative; padding: 14vh clamp(16px, 5vw, 72px) 10vh; display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(24px, 5vw, 80px); align-items: end; }
+.contact { position: relative; padding: 8vh clamp(16px, 5vw, 72px) 10vh; display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(24px, 5vw, 80px); align-items: end; }
 .contact h2 { font-size: clamp(2.6rem, 7vw, 6rem); text-transform: uppercase; margin-bottom: 18px; }
 .contact .links { display: flex; flex-wrap: wrap; gap: 10px 28px; font: 500 1rem/1.4 var(--mono); }
 .contact small { display: block; margin-top: 60px; font: 400 0.72rem/1.4 var(--mono); color: var(--faint); letter-spacing: 0.04em; }
@@ -255,15 +263,20 @@ p:last-child { margin-bottom: 0; }
   .split { grid-template-columns: 1fr; }
   .sticky-media { position: relative; top: auto; transform: none; }
   .photo { width: 100%; max-width: 640px; margin: 0 auto; }
-  .steps { gap: 18vh; padding: 14vh 0 24vh; max-width: none; }
-  .mri .steps { padding-top: 10vh; }
+  .media-stack > .photo.board { display: none; }
+  .mobile-only { display: block; }
+  .glass { font-size: 1.05rem; }
+  h3 { font-size: 1.7rem; }
+  .steps { gap: 10vh; padding: 8vh 0 14vh; max-width: none; }
+  .mri .steps { padding-top: 6vh; }
   .hp-text { left: 16px; right: 16px; width: auto; top: 13svh; padding: 18px; }
   .hp-text h2 { font-size: 1.9rem; margin-bottom: 8px; }
   .hp-text p { font-size: 0.95rem; line-height: 1.5; }
   .hp-text .specs { display: none; }
   .items { padding-left: 0; gap: 14px; }
-  .frame { width: min(34vw, 200px); }
-  .frame.wide { width: min(50vw, 280px); }
+  .frame.small { width: min(28vw, 150px); }
+  .frame.wide { width: min(58vw, 330px); }
+  .items { justify-content: center; padding: 0 8px; }
   .bench { top: 76svh; }
   .contact { grid-template-columns: 1fr; }
 }
@@ -306,26 +319,32 @@ p:last-child { margin-bottom: 0; }
 
   <section class="chapter" id="micro" aria-label="A $150 microscope that can see malaria">
     <div class="split">
-      <div class="sticky-media">
-        <figure class="photo rv">
-          <img src="images/microscope.jpg" alt="The 3D-printed microscope: a PiCamera on top, the LED board below it, and a Raspberry Pi at the base" width="1600" height="894">
-          <figcaption>The assembled microscope: PiCamera, LED board, Raspberry Pi</figcaption>
-        </figure>
+      <div class="sticky-media rv">
+        <div class="media-stack">
+          <figure class="photo scope">
+            <img src="images/microscope.jpg" alt="The 3D-printed microscope: a PiCamera on top, the LED board below it, and a Raspberry Pi at the base" width="1600" height="894">
+            <figcaption>The assembled microscope: PiCamera, LED board, Raspberry Pi</figcaption>
+          </figure>
+          <figure class="photo board off" aria-hidden="true">
+            <img src="images/led-board.jpg" alt="The LED board mounted on the Raspberry Pi, next to a quarter for scale" width="1270" height="675">
+            <figcaption>LED Board V0.2.1 mounted on the Raspberry Pi, quarter for scale</figcaption>
+          </figure>
+        </div>
       </div>
       <div class="steps">
         <div class="glass rv">
-          <p class="lede">Fourier ptychography builds one sharp image out of many blurry ones, each lit from a different angle. Our three-person team built a 3D-printed version around a Raspberry Pi, aimed at malaria diagnosis where a lab microscope isn’t affordable. I owned the hardware.</p>
+          <p class="lede">Fourier ptychography builds one sharp image out of many blurry ones, each lit from a different angle. Our three-person team built a 3D-printed version around a Raspberry Pi, aimed at malaria diagnosis where a lab microscope isn’t affordable. I owned the hardware and wrote the code that drives it, from the STM32 firmware to the Python library on the Pi.</p>
         </div>
-        <div class="glass rv">
+        <div class="glass rv" data-media="board">
           <p class="kicker">Hardware</p>
           <h3>LED illumination board</h3>
           <p>Off-the-shelf LED matrices flickered even at full brightness, which ruins image capture. I designed a 2-layer board with about 150 addressable LEDs in a ring layout, an STM32 and 3.3 V to 5 V level shifting, sized to sit on top of the Pi. It went through three revisions.</p>
           <div class="extra">
-            <figure><img src="images/led-board.jpg" alt="The custom LED illumination board"><figcaption>Final LED board</figcaption></figure>
+            <figure class="mobile-only"><img src="images/led-board.jpg" alt="The LED board mounted on the Raspberry Pi, next to a quarter for scale" width="1270" height="675"><figcaption>LED Board V0.2.1 on the Pi</figcaption></figure>
             <figure><img src="images/led-board-revisions.jpg" alt="Three revisions of the LED board side by side"><figcaption>Board revisions</figcaption></figure>
           </div>
         </div>
-        <div class="glass rv">
+        <div class="glass rv" data-media="board">
           <p class="kicker">Firmware</p>
           <h3>Firmware and control</h3>
           <p>C firmware on the STM32 and a Python library on the Pi talk both ways over SPI, setting LED patterns and brightness and stepping through lighting sequences in sync with the camera.</p>
@@ -339,7 +358,7 @@ p:last-child { margin-bottom: 0; }
           <p class="result">We imaged malaria parasites inside red blood cells, and later cut the parts cost to about $150 CAD. The work is part of a <a href="https://doi.org/10.1117/12.3003269">paper in Proc. SPIE (2024)</a>, where I’m a co-author.</p>
           <dl class="specs" style="margin-top:22px">
             <div><dt>Where</dt><dd>Robarts Research Institute, Western University</dd></div>
-            <div><dt>My part</dt><dd>Hardware, firmware, CAD, imaging tests</dd></div>
+            <div><dt>My part</dt><dd>Hardware, firmware, Python, CAD, imaging tests</dd></div>
             <div><dt>When</dt><dd>Summers 2023 and 2024</dd></div>
             <div><dt>Status</dt><dd>Published, SPIE 2024</dd></div>
           </dl>
@@ -413,9 +432,9 @@ p:last-child { margin-bottom: 0; }
             <div class="pic"><img src="images/headphones-done.jpg" alt="The repaired headphones, with a close-up of the sanded resin housing over the cable joint" width="1600" height="1006"><div class="ph">Photo: the repair</div></div>
             <figcaption>The repair</figcaption>
           </figure>
-          <figure class="frame">
-            <div class="pic"><img src="images/headphones-mold.jpg" alt="The 3D-printed mold around the soldered joint"><div class="ph">Photo: the mold</div></div>
-            <figcaption>The mold</figcaption>
+          <figure class="frame small">
+            <div class="pic"><img src="images/headphones-mold.jpg" alt="CAD model of the two-part mold, with the cavity and cable channels for the resin" width="958" height="1131"><div class="ph">Photo: the mold</div></div>
+            <figcaption>The mold (CAD)</figcaption>
           </figure>
         </div>
       </div>
@@ -463,6 +482,21 @@ p:last-child { margin-bottom: 0; }
   } else {
     document.querySelectorAll('.rv').forEach(function (el) { el.classList.add('in'); });
   }
+
+  // ---------- Microscope photo swaps to the LED board while those cards are centred ----------
+  var scopeFig = document.querySelector('.photo.scope'), boardFig = document.querySelector('.photo.board');
+  var boardCards = Array.prototype.slice.call(document.querySelectorAll('[data-media="board"]'));
+  var showingBoard = false;
+  function mediaSwap() {
+    var mid = window.innerHeight / 2, want = false;
+    boardCards.forEach(function (c) { var r = c.getBoundingClientRect(); if (r.top < mid + 120 && r.bottom > mid - 120) want = true; });
+    if (want !== showingBoard) {
+      showingBoard = want;
+      boardFig.classList.toggle('off', !want); scopeFig.classList.toggle('off', want);
+      boardFig.setAttribute('aria-hidden', want ? 'false' : 'true'); scopeFig.setAttribute('aria-hidden', want ? 'true' : 'false');
+    }
+  }
+  window.addEventListener('scroll', mediaSwap, { passive: true });
 
   // ---------- Helpers ----------
   function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
