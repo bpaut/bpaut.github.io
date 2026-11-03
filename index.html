@@ -5,294 +5,869 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Brandon Pautler – Electrical Engineer</title>
 <meta name="description" content="Brandon Pautler, electrical engineering student at Queen's University. Hardware design, PCBs, embedded systems and field engineering.">
+<meta name="theme-color" content="#16161c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --paper: #EDF0EC;
-  --sheet: #F7F8F5;
-  --ink: #1C2321;
-  --muted: #56625E;
-  --line: #B5BDB8;
-  --red: #C23A22;
-  --led-off: #D3D8D4;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #131817;
-    --sheet: #1A201F;
-    --ink: #E3E7E4;
-    --muted: #9AA6A2;
-    --line: #3A4542;
-    --red: #EE6A50;
-    --led-off: #2C3533;
-  }
+  color-scheme: dark;
+  --bg: #16161c;
+  --ink: #ECEAF3;
+  --muted: #A9A6B8;
+  --faint: #6F6C80;
+  --pink: #FF4FBF;
+  --purple: #A15CFF;
+  --blue: #3D9BFF;
+  --glass: rgba(18, 16, 28, 0.58);
+  --glass-line: rgba(255, 255, 255, 0.09);
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --cond: "Barlow Condensed", "Barlow", sans-serif;
+  /* bench scene, driven from script; defaults show the finished bench */
+  --drop: 1; --rise: 1; --lamp: 1; --place: 1; --txt: 1;
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--bg);
   color: var(--ink);
   font: 400 1.0625rem/1.6 "Barlow", system-ui, sans-serif;
+  overflow-x: hidden;
 }
-a { color: inherit; text-decoration-color: var(--red); text-decoration-thickness: 2px; text-underline-offset: 3px; }
-a:hover { color: var(--red); }
-a:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
-.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+a { color: inherit; text-decoration-color: var(--pink); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { color: #FFC2EA; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; border-radius: 2px; }
+
+#scene {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh; height: 100lvh;
+  display: block; z-index: 0; pointer-events: none;
+}
+main, .topbar { position: relative; z-index: 1; }
+
+/* Top bar */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px clamp(16px, 4vw, 48px);
+  font: 500 0.82rem/1 var(--mono); letter-spacing: 0.04em;
+}
+.topbar::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(rgba(14, 13, 20, 0.85), rgba(14, 13, 20, 0));
+  opacity: var(--bar, 0); transition: opacity 0.3s;
+}
+.topbar .who { text-decoration: none; opacity: var(--bar, 0); transition: opacity 0.3s; text-transform: uppercase; }
+.topbar ul { display: flex; gap: clamp(14px, 3vw, 32px); list-style: none; margin: 0; padding: 0; }
+.topbar ul a { text-decoration: none; text-transform: uppercase; color: var(--ink); }
+.topbar ul a:hover { color: var(--pink); }
+
+/* Glass panels */
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid var(--glass-line);
+  border-radius: 14px;
+  padding: clamp(20px, 2.4vw, 32px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+.kicker {
+  font: 500 0.78rem/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--pink); margin: 0 0 14px;
+}
+h2, h3 { font-family: var(--cond); font-weight: 600; line-height: 1.02; margin: 0; }
+h3 { font-size: 1.55rem; margin-bottom: 10px; letter-spacing: 0.005em; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+
+/* Reveal on scroll */
+.js .rv { opacity: 0; transform: translateY(28px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.2, .7, .2, 1); }
+.js .rv.in { opacity: 1; transform: none; }
 
 /* Hero */
 .hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 48px;
-  align-items: center;
-  padding: 72px 0 56px;
+  min-height: 100vh; min-height: 100svh;
+  display: grid; place-items: center; text-align: center;
+  padding: 90px clamp(16px, 4vw, 48px) 60px; position: relative;
 }
-h1 {
-  font: 700 clamp(3.4rem, 9vw, 6.5rem)/0.9 "Barlow Condensed", sans-serif;
-  letter-spacing: -0.01em;
-  margin: 0 0 28px;
+.hero h1 {
+  font: 700 clamp(3.6rem, 13vw, 11.5rem)/0.86 var(--cond);
+  text-transform: uppercase; letter-spacing: -0.005em; margin: 0;
+  text-shadow: 0 0 40px rgba(161, 92, 255, 0.25);
 }
-.intro { font-size: 1.25rem; line-height: 1.5; max-width: 34ch; margin: 0 0 28px; }
-.links { display: flex; flex-wrap: wrap; gap: 12px 28px; padding: 0; margin: 0; list-style: none; font-weight: 600; }
-.board-fig { margin: 0; }
-.board-fig svg { width: 100%; height: auto; display: block; }
-.board-fig figcaption { color: var(--muted); font-size: 0.95rem; margin-top: 10px; max-width: 46ch; }
-.pcb { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.5; }
-.hole { fill: var(--paper); stroke: var(--ink); stroke-width: 1.2; }
-.trace { fill: none; stroke: var(--line); stroke-width: 1; }
-.chip { fill: none; stroke: var(--ink); stroke-width: 1.2; }
-.pin { stroke: var(--ink); stroke-width: 1; }
-.led { fill: var(--led-off); stroke: var(--ink); stroke-width: 0.6; transition: fill 0.5s ease-out; }
-.led.on { fill: var(--red); transition: none; }
-.anno { fill: var(--red); font: 500 13px "Barlow Condensed", sans-serif; }
-.anno-line { stroke: var(--red); stroke-width: 1; fill: none; }
-
-/* Sheets */
-.sheet {
-  background: var(--sheet);
-  border: 1.5px solid var(--ink);
-  margin: 0 0 40px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
+.hero .sub { font: 500 clamp(0.8rem, 1.4vw, 0.95rem)/1.5 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 22px 0 0; }
+.hero .feature { margin: clamp(40px, 8vh, 80px) auto 0; max-width: 30rem; }
+.hero .feature .kicker { margin-bottom: 10px; }
+.hero .feature h2 { font-size: clamp(1.9rem, 4.2vw, 3.2rem); }
+.cue {
+  position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+  font: 500 0.75rem/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  display: flex; flex-direction: column; align-items: center; gap: 10px; white-space: nowrap;
 }
-.sheet-body { padding: 36px 40px 40px; border-right: 1.5px solid var(--ink); }
-h2 {
-  font: 600 clamp(1.9rem, 4vw, 2.6rem)/1.05 "Barlow Condensed", sans-serif;
-  margin: 0 0 18px;
-  max-width: 24ch;
+.cue::after { content: ""; width: 1px; height: 36px; background: linear-gradient(var(--pink), transparent); animation: cue 2s ease-in-out infinite; transform-origin: top; }
+@keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+
+/* Project chapters */
+.chapter { position: relative; padding: 10vh clamp(16px, 5vw, 72px); }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 6vw, 110px); align-items: start; }
+.sticky-media { position: sticky; top: max(84px, calc(50vh - 11vw)); }
+.photo { margin: 0; width: min(33vw, 640px); margin-left: auto; }
+.photo img {
+  display: block; width: 100%; height: auto; border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 70px rgba(161, 92, 255, 0.28);
 }
-.lede { font-size: 1.15rem; max-width: 62ch; margin: 0 0 24px; }
-.parts { margin: 0; max-width: 64ch; }
-.parts dt { font-weight: 600; margin-top: 18px; }
-.parts dd { margin: 4px 0 0; }
-.result { margin: 26px 0 0; padding-left: 16px; border-left: 3px solid var(--red); max-width: 62ch; }
-.photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 28px; }
-.photos figure { margin: 0; }
-.photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; border: 1px solid var(--line); }
-.photos figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 6px; }
-.photos figure.missing { display: none; }
+.photo figcaption { display: inline-block; font: 400 0.78rem/1.4 var(--mono); color: var(--muted); margin-top: 12px; letter-spacing: 0.03em; background: rgba(14, 13, 20, 0.7); padding: 4px 8px; border-radius: 4px; }
+.steps { display: flex; flex-direction: column; gap: 46vh; padding: 30vh 0 36vh; max-width: 560px; }
+.steps .lede { font-size: 1.2rem; line-height: 1.5; }
+.result { border-left: 3px solid var(--pink); padding-left: 16px; }
+.specs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; margin: 0; font-size: 0.95rem; }
+.specs dt { font: 500 0.72rem/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+.specs dd { margin: 4px 0 0; font-weight: 500; }
+.live { color: var(--pink); }
+.live::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 10px var(--pink); margin-right: 8px; vertical-align: 1px; animation: pulse 1.8s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.35; } }
+.extra { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 18px; }
+.extra figure { margin: 0; }
+.extra img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; border-radius: 6px; }
+.extra figcaption { font: 400 0.72rem/1.3 var(--mono); color: var(--muted); margin-top: 6px; }
+.extra figure.missing { display: none; }
 
-/* Title block: what an engineering drawing uses to identify the sheet */
-.title-block { display: flex; flex-direction: column; font-size: 0.95rem; }
-.title-block div { padding: 12px 18px; border-bottom: 1px solid var(--line); }
-.title-block div:last-child { border-bottom: 0; flex: 1; }
-.title-block dt { color: var(--muted); font-size: 0.85rem; }
-.title-block dd { margin: 2px 0 0; font-weight: 500; }
-.status-live { color: var(--red); }
+.chapter-head { max-width: 40rem; }
+.chapter-head h2 { font-size: clamp(2.2rem, 5.2vw, 4.4rem); }
+.mri .steps { padding-top: 22vh; }
 
-/* Footer */
-.about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; padding: 24px 0 72px; }
-.about h2 { font-size: 1.8rem; }
-.about p { margin: 0 0 12px; max-width: 52ch; }
+/* Bridges between chapters */
+.bridge { height: 95vh; display: grid; place-items: center; text-align: center; padding: 0 16px; }
+.bridge p { font: 500 clamp(1.3rem, 2.6vw, 2rem)/1.3 var(--cond); color: var(--ink); text-shadow: 0 2px 18px rgba(10, 8, 18, 0.95), 0 0 4px rgba(10, 8, 18, 0.9); max-width: 26ch; letter-spacing: 0.01em; }
 
-@media (max-width: 860px) {
-  .hero { grid-template-columns: 1fr; padding-top: 48px; gap: 32px; }
-  .sheet { grid-template-columns: 1fr; }
-  .sheet-body { border-right: 0; border-bottom: 1.5px solid var(--ink); padding: 28px 22px 30px; }
-  .title-block { display: grid; grid-template-columns: 1fr 1fr; }
-  .title-block div { border-right: 1px solid var(--line); }
-  .title-block div:nth-child(2n) { border-right: 0; }
-  .about { grid-template-columns: 1fr; gap: 8px; }
+/* Bench scene */
+.bench-sec { height: 290vh; position: relative; }
+.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.lamp {
+  position: absolute; left: 50%; top: 0; width: min(80vw, 1150px); height: 24px;
+  transform: translate(-50%, calc(-60px + var(--drop) * (60px + 9svh)));
+}
+.lamp::before, .lamp::after {
+  content: ""; position: absolute; bottom: 100%; width: 3px; height: 100svh;
+  background: linear-gradient(90deg, #4a4858, #8d8a9e, #4a4858);
+}
+.lamp::before { left: 14%; } .lamp::after { right: 14%; }
+.lamp .bar {
+  position: absolute; inset: 0; border-radius: 6px;
+  background: linear-gradient(#9b98ab, #5c5a6b 45%, #2c2b35);
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.08) inset, 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.lamp .strip {
+  position: absolute; left: 3%; right: 3%; bottom: -3px; height: 6px; border-radius: 3px;
+  background: #3a3846;
+}
+.lamp .strip::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(90deg, #ffd3f1, #f4ecff 30%, #ffffff 50%, #e6efff 70%, #cfe6ff);
+  box-shadow: 0 0 18px 4px rgba(214, 170, 255, 0.85), 0 0 60px 14px rgba(161, 92, 255, 0.45);
+  opacity: var(--lamp);
+}
+.cone {
+  position: absolute; left: -12%; right: -12%; top: 100%; height: 86svh;
+  clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%);
+  background: linear-gradient(rgba(236, 214, 255, 0.24), rgba(170, 120, 255, 0.09) 55%, rgba(120, 140, 255, 0) 100%);
+  opacity: var(--lamp); pointer-events: none;
+}
+.bench {
+  position: absolute; left: 3vw; right: 3vw; top: 70svh; height: 60svh;
+  transform: translateY(calc((1 - var(--rise)) * 45svh));
+}
+.surface {
+  position: absolute; left: 0; right: 0; top: 0; height: 7svh;
+  clip-path: polygon(2.2% 0, 97.8% 0, 100% 100%, 0 100%);
+  background: linear-gradient(#2b2a35, #3a3946);
+}
+.surface::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(60% 140% at 50% 0%, rgba(236, 214, 255, 0.5), rgba(161, 92, 255, 0.12) 60%, transparent 85%);
+  opacity: var(--lamp);
+}
+.edge {
+  position: absolute; left: 0; right: 0; top: 7svh; height: 3.4svh; border-radius: 0 0 4px 4px;
+  background: linear-gradient(#5a5868, #34333f 40%, #24232c);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset;
+}
+.edge::after {
+  content: ""; position: absolute; left: 10%; right: 10%; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--pink), #fff, var(--blue), transparent);
+  opacity: calc(var(--lamp) * 0.8); filter: blur(0.5px);
+}
+.leg { position: absolute; top: 10.4svh; bottom: 0; width: 2.6vw; max-width: 34px; background: linear-gradient(90deg, #1d1c24, #3d3c49 40%, #1d1c24); }
+.leg.l { left: 5%; } .leg.r { right: 5%; }
+.items {
+  position: absolute; left: 0; right: 0; bottom: calc(100% - 4.2svh);
+  display: flex; justify-content: center; align-items: flex-end; gap: clamp(18px, 5vw, 80px);
+  padding-left: 40%;
+}
+.frame {
+  margin: 0; position: relative; width: clamp(130px, 19vw, 300px);
+  opacity: var(--place);
+  transform: translateY(calc((1 - var(--place)) * -40px)) rotate(var(--tilt, 0deg));
+  transform-origin: bottom center;
+}
+.frame:nth-child(1) { --tilt: -2.5deg; }
+.frame:nth-child(2) { --tilt: 2deg; }
+.frame .pic {
+  position: relative; aspect-ratio: 4 / 3; border-radius: 3px; overflow: hidden;
+  background: #1b1a22; border: clamp(6px, 0.8vw, 11px) solid #2d2c36;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 -1px 0 rgba(255, 255, 255, 0.25), 0 18px 30px rgba(0, 0, 0, 0.45);
+  filter: brightness(calc(0.3 + 0.7 * var(--lamp)));
+}
+.frame img { width: 100%; height: auto; display: block; }
+.frame:not(.missing) .pic { aspect-ratio: auto; }
+.frame.wide { width: clamp(170px, 27vw, 430px); }
+.frame .ph {
+  display: none; position: absolute; inset: 0; place-items: center; text-align: center; padding: 10px;
+  font: 400 0.72rem/1.4 var(--mono); color: var(--faint); letter-spacing: 0.04em;
+  background: repeating-linear-gradient(135deg, #1b1a22 0 10px, #201f29 10px 20px);
+}
+.frame.missing img { display: none; }
+.frame.missing .ph { display: grid; }
+.frame::after {
+  content: ""; position: absolute; left: 6%; right: 6%; bottom: -10px; height: 16px; border-radius: 50%;
+  background: radial-gradient(rgba(0, 0, 0, 0.6), transparent 70%); z-index: -1;
+}
+.frame figcaption {
+  position: absolute; left: 50%; top: calc(100% + 1svh); transform: translateX(-50%) rotate(calc(var(--tilt) * -1));
+  white-space: nowrap; font: 500 0.7rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+}
+.hp-text {
+  position: absolute; left: clamp(16px, 5vw, 72px); top: 15svh; width: min(36vw, 480px);
+  opacity: var(--txt); transform: translateY(calc((1 - var(--txt)) * 24px));
+}
+.hp-text h2 { font-size: clamp(2rem, 4vw, 3.4rem); margin-bottom: 14px; }
+.hp-text .specs { margin-top: 18px; }
+
+/* Contact */
+.contact { position: relative; padding: 14vh clamp(16px, 5vw, 72px) 10vh; display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(24px, 5vw, 80px); align-items: end; }
+.contact h2 { font-size: clamp(2.6rem, 7vw, 6rem); text-transform: uppercase; margin-bottom: 18px; }
+.contact .links { display: flex; flex-wrap: wrap; gap: 10px 28px; font: 500 1rem/1.4 var(--mono); }
+.contact small { display: block; margin-top: 60px; font: 400 0.72rem/1.4 var(--mono); color: var(--faint); letter-spacing: 0.04em; }
+
+@media (max-width: 900px) {
+  .split { grid-template-columns: 1fr; }
+  .sticky-media { position: relative; top: auto; transform: none; }
+  .photo { width: 100%; max-width: 640px; margin: 0 auto; }
+  .steps { gap: 18vh; padding: 14vh 0 24vh; max-width: none; }
+  .mri .steps { padding-top: 10vh; }
+  .hp-text { left: 16px; right: 16px; width: auto; top: 13svh; padding: 18px; }
+  .hp-text h2 { font-size: 1.9rem; margin-bottom: 8px; }
+  .hp-text p { font-size: 0.95rem; line-height: 1.5; }
+  .hp-text .specs { display: none; }
+  .items { padding-left: 0; gap: 14px; }
+  .frame { width: min(34vw, 200px); }
+  .frame.wide { width: min(50vw, 280px); }
+  .bench { top: 76svh; }
+  .contact { grid-template-columns: 1fr; }
 }
 @media (max-width: 520px) {
-  .wrap { padding: 0 16px; }
-  .title-block { grid-template-columns: 1fr; }
-  .title-block div { border-right: 0; }
+  .specs { grid-template-columns: 1fr; }
+  .topbar .who { display: none; }
+  .topbar { justify-content: flex-end; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .led { transition: none; }
+  .js .rv { transition: none; opacity: 1; transform: none; }
+  .cue::after, .live::before { animation: none; }
 }
 </style>
 </head>
 <body>
-<main class="wrap">
+<canvas id="scene" aria-hidden="true"></canvas>
 
-  <header class="hero">
+<nav class="topbar" aria-label="Contact">
+  <a class="who" href="#top">Brandon Pautler</a>
+  <ul>
+    <li><a href="Brandon_Pautler_Resume.pdf">Résumé</a></li>
+    <li><a href="mailto:bpautler@bell.net">Email</a></li>
+    <li><a href="https://www.linkedin.com/in/brandon-pautler">LinkedIn</a></li>
+  </ul>
+</nav>
+
+<main id="top">
+
+  <header class="hero" id="hero">
     <div>
-      <h1>Brandon Pautler</h1>
-      <p class="intro">Electrical engineering student at Queen’s University, graduating April 2027. I design hardware, build it, and make it work.</p>
-      <ul class="links">
-        <li><a href="Brandon_Pautler_Resume.pdf">Résumé (PDF)</a></li>
-        <li><a href="mailto:bpautler@bell.net">bpautler@bell.net</a></li>
-        <li><a href="https://www.linkedin.com/in/brandon-pautler">LinkedIn</a></li>
-      </ul>
+      <h1>Brandon<br>Pautler</h1>
+      <p class="sub">Electrical engineering · Queen’s University · Graduating April 2027</p>
+      <div class="feature">
+        <p class="kicker">01 — Robarts Research Institute</p>
+        <h2>A $150 microscope that can see malaria</h2>
+      </div>
     </div>
-    <figure class="board-fig">
-      <svg id="board" viewBox="0 0 460 400" role="img" aria-labelledby="board-cap"></svg>
-      <figcaption id="board-cap">A sketch of the LED illumination board I designed for a low-cost microscope, lighting one LED at a time the way it does during image capture.</figcaption>
-    </figure>
+    <div class="cue" aria-hidden="true">Scroll to light the board</div>
   </header>
 
-  <article class="sheet">
-    <div class="sheet-body">
-      <h2>A $150 microscope that can see malaria</h2>
-      <p class="lede">Fourier ptychography builds one sharp image out of many blurry ones, each lit from a different angle. Our three-person team built a 3D-printed version around a Raspberry Pi, aimed at malaria diagnosis where a lab microscope isn’t affordable. I owned the hardware.</p>
-      <dl class="parts">
-        <dt>LED illumination board</dt>
-        <dd>Off-the-shelf LED matrices flickered even at full brightness, which ruins image capture. I designed a 2-layer board with about 150 addressable LEDs in a ring layout, an STM32 and 3.3 V to 5 V level shifting, sized to sit on top of the Pi. It went through three revisions.</dd>
-        <dt>Firmware and control</dt>
-        <dd>C firmware on the STM32 and a Python library on the Pi talk both ways over SPI, setting LED patterns and brightness and stepping through lighting sequences in sync with the camera.</dd>
-        <dt>Microscope body</dt>
-        <dd>I redesigned the 3D-printed body in Onshape over five-plus iterations to line up the lens, sensor and aperture, and worked out the aperture size so it takes in light from the outermost LEDs while blocking reflections from the rest of the board.</dd>
-      </dl>
-      <p class="result">We imaged malaria parasites inside red blood cells, and later cut the parts cost to about $150 CAD. The work is part of a <a href="https://doi.org/10.1117/12.3003269">paper in Proc. SPIE (2024)</a>, where I’m a co-author.</p>
-      <div class="photos">
-        <figure><img src="images/microscope.jpg" alt="The assembled 3D-printed microscope on a Raspberry Pi" loading="lazy"><figcaption>The assembled microscope</figcaption></figure>
-        <figure><img src="images/led-board.jpg" alt="The custom LED illumination board" loading="lazy"><figcaption>Final LED board</figcaption></figure>
-        <figure><img src="images/led-board-revisions.jpg" alt="Three revisions of the LED board side by side" loading="lazy"><figcaption>Board revisions</figcaption></figure>
+  <section class="chapter" id="micro" aria-label="A $150 microscope that can see malaria">
+    <div class="split">
+      <div class="sticky-media">
+        <figure class="photo rv">
+          <img src="images/microscope.jpg" alt="The 3D-printed microscope: a PiCamera on top, the LED board below it, and a Raspberry Pi at the base" width="1600" height="894">
+          <figcaption>The assembled microscope: PiCamera, LED board, Raspberry Pi</figcaption>
+        </figure>
+      </div>
+      <div class="steps">
+        <div class="glass rv">
+          <p class="lede">Fourier ptychography builds one sharp image out of many blurry ones, each lit from a different angle. Our three-person team built a 3D-printed version around a Raspberry Pi, aimed at malaria diagnosis where a lab microscope isn’t affordable. I owned the hardware.</p>
+        </div>
+        <div class="glass rv">
+          <p class="kicker">Hardware</p>
+          <h3>LED illumination board</h3>
+          <p>Off-the-shelf LED matrices flickered even at full brightness, which ruins image capture. I designed a 2-layer board with about 150 addressable LEDs in a ring layout, an STM32 and 3.3 V to 5 V level shifting, sized to sit on top of the Pi. It went through three revisions.</p>
+          <div class="extra">
+            <figure><img src="images/led-board.jpg" alt="The custom LED illumination board"><figcaption>Final LED board</figcaption></figure>
+            <figure><img src="images/led-board-revisions.jpg" alt="Three revisions of the LED board side by side"><figcaption>Board revisions</figcaption></figure>
+          </div>
+        </div>
+        <div class="glass rv">
+          <p class="kicker">Firmware</p>
+          <h3>Firmware and control</h3>
+          <p>C firmware on the STM32 and a Python library on the Pi talk both ways over SPI, setting LED patterns and brightness and stepping through lighting sequences in sync with the camera.</p>
+        </div>
+        <div class="glass rv">
+          <p class="kicker">Mechanical</p>
+          <h3>Microscope body</h3>
+          <p>I redesigned the 3D-printed body in Onshape over five-plus iterations to line up the lens, sensor and aperture, and worked out the aperture size so it takes in light from the outermost LEDs while blocking reflections from the rest of the board.</p>
+        </div>
+        <div class="glass rv">
+          <p class="result">We imaged malaria parasites inside red blood cells, and later cut the parts cost to about $150 CAD. The work is part of a <a href="https://doi.org/10.1117/12.3003269">paper in Proc. SPIE (2024)</a>, where I’m a co-author.</p>
+          <dl class="specs" style="margin-top:22px">
+            <div><dt>Where</dt><dd>Robarts Research Institute, Western University</dd></div>
+            <div><dt>My part</dt><dd>Hardware, firmware, CAD, imaging tests</dd></div>
+            <div><dt>When</dt><dd>Summers 2023 and 2024</dd></div>
+            <div><dt>Status</dt><dd>Published, SPIE 2024</dd></div>
+          </dl>
+        </div>
       </div>
     </div>
-    <dl class="title-block">
-      <div><dt>Where</dt><dd>Robarts Research Institute, Western University</dd></div>
-      <div><dt>My part</dt><dd>Hardware, firmware, CAD, imaging tests</dd></div>
-      <div><dt>When</dt><dd>Summers 2023 and 2024</dd></div>
-      <div><dt>Status</dt><dd>Published, SPIE 2024</dd></div>
-    </dl>
-  </article>
+  </section>
 
-  <article class="sheet">
-    <div class="sheet-body">
-      <h2>A touchscreen that works inside an MRI scanner</h2>
-      <p class="lede">A psychology lab at Queen’s wants people inside an MRI scanner to use a touchscreen during fMRI studies. Anything magnetic is a problem in there, so the tablet runs on battery and gets its video and touch data over fibre optics from the control room.</p>
-      <dl class="parts">
-        <dt>Air-core inductors</dt>
-        <dd>Ferrite-core inductors saturate in the scanner’s field, and nobody sells air-core parts at the values we need. I’m designing our own, sized with Wheeler’s formula.</dd>
-        <dt>Display driver board</dt>
-        <dd>I’m replacing the ferrous components on a commercial display’s driver board with non-magnetic parts.</dd>
-        <dt>Enclosure</dt>
-        <dd>A 3D-printed case for the display, electronics and battery, with no metal fasteners or framing.</dd>
-      </dl>
-      <div class="photos">
-        <figure><img src="images/mri-inductor.jpg" alt="A hand-wound air-core inductor" loading="lazy"><figcaption>Air-core inductor</figcaption></figure>
-        <figure><img src="images/mri-enclosure.jpg" alt="The 3D-printed tablet enclosure" loading="lazy"><figcaption>Enclosure</figcaption></figure>
+  <div class="bridge" id="bridge1"><p class="rv">Next: a room where anything magnetic is a problem.</p></div>
+
+  <section class="chapter mri" id="mri" aria-label="A touchscreen that works inside an MRI scanner">
+    <div class="split">
+      <div>
+        <div class="chapter-head rv">
+          <p class="kicker">02 — Queen’s capstone, team of four</p>
+          <h2>A touchscreen that works inside an MRI scanner</h2>
+        </div>
+        <div class="steps">
+          <div class="glass rv">
+            <p class="lede">A psychology lab at Queen’s wants people inside an MRI scanner to use a touchscreen during fMRI studies. Anything magnetic is a problem in there, so the tablet runs on battery and gets its video and touch data over fibre optics from the control room.</p>
+          </div>
+          <div class="glass rv">
+            <p class="kicker">Magnetics</p>
+            <h3>Air-core inductors</h3>
+            <p>Ferrite-core inductors saturate in the scanner’s field, and nobody sells air-core parts at the values we need. I’m designing our own, sized with Wheeler’s formula.</p>
+            <div class="extra"><figure><img src="images/mri-inductor.jpg" alt="A hand-wound air-core inductor"><figcaption>Air-core inductor</figcaption></figure></div>
+          </div>
+          <div class="glass rv">
+            <p class="kicker">Electronics</p>
+            <h3>Display driver board</h3>
+            <p>I’m replacing the ferrous components on a commercial display’s driver board with non-magnetic parts.</p>
+          </div>
+          <div class="glass rv">
+            <p class="kicker">Mechanical</p>
+            <h3>Enclosure</h3>
+            <p>A 3D-printed case for the display, electronics and battery, with no metal fasteners or framing.</p>
+            <div class="extra"><figure><img src="images/mri-enclosure.jpg" alt="The 3D-printed tablet enclosure"><figcaption>Enclosure</figcaption></figure></div>
+            <dl class="specs" style="margin-top:22px">
+              <div><dt>Where</dt><dd>Queen’s University capstone</dd></div>
+              <div><dt>My part</dt><dd>Inductors, display board, enclosure</dd></div>
+              <div><dt>When</dt><dd>September 2026 to now</dd></div>
+              <div><dt>Status</dt><dd class="live">In progress</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+      <div aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <div class="bridge" id="bridge2"><p class="rv">And one fix at home.</p></div>
+
+  <section class="bench-sec" id="bench" aria-label="Fixing my headphones">
+    <div class="stage">
+      <div class="lamp" aria-hidden="true"><div class="bar"></div><div class="strip"></div><div class="cone"></div></div>
+      <div class="hp-text glass">
+        <p class="kicker">03 — Home, February 2025</p>
+        <h2>Fixing my headphones</h2>
+        <p>I snapped the cable on my favourite wired headphones. Inside were three very thin conductors. I soldered them back together, designed and 3D printed a mold to keep the joints apart, filled it with resin, then sanded the result into a solid housing. They work again.</p>
+        <dl class="specs">
+          <div><dt>My part</dt><dd>All of it</dd></div>
+          <div><dt>Status</dt><dd>Still working</dd></div>
+        </dl>
+      </div>
+      <div class="bench">
+        <div class="surface"></div>
+        <div class="edge"></div>
+        <div class="leg l"></div><div class="leg r"></div>
+        <div class="items">
+          <figure class="frame wide">
+            <div class="pic"><img src="images/headphones-done.jpg" alt="The repaired headphones, with a close-up of the sanded resin housing over the cable joint" width="1600" height="1006"><div class="ph">Photo: the repair</div></div>
+            <figcaption>The repair</figcaption>
+          </figure>
+          <figure class="frame">
+            <div class="pic"><img src="images/headphones-mold.jpg" alt="The 3D-printed mold around the soldered joint"><div class="ph">Photo: the mold</div></div>
+            <figcaption>The mold</figcaption>
+          </figure>
+        </div>
       </div>
     </div>
-    <dl class="title-block">
-      <div><dt>Where</dt><dd>Queen’s University capstone, team of four</dd></div>
-      <div><dt>My part</dt><dd>Inductors, display board, enclosure</dd></div>
-      <div><dt>When</dt><dd>September 2026 to now</dd></div>
-      <div><dt>Status</dt><dd class="status-live">In progress</dd></div>
-    </dl>
-  </article>
+  </section>
 
-
-  <article class="sheet">
-    <div class="sheet-body">
-      <h2>Fixing my headphones</h2>
-      <p class="lede">I snapped the cable on my favourite wired headphones. Inside were three very thin conductors. I soldered them back together, designed and 3D printed a mold to keep the joints apart, filled it with resin, then sanded the result into a solid housing. They work again.</p>
-      <div class="photos">
-        <figure><img src="images/headphones-mold.jpg" alt="The 3D-printed mold around the soldered joint" loading="lazy"><figcaption>The mold</figcaption></figure>
-        <figure><img src="images/headphones-done.jpg" alt="The finished resin repair on the headphone cable" loading="lazy"><figcaption>Finished repair</figcaption></figure>
-      </div>
-    </div>
-    <dl class="title-block">
-      <div><dt>Where</dt><dd>Home</dd></div>
-      <div><dt>My part</dt><dd>All of it</dd></div>
-      <div><dt>When</dt><dd>February 2025</dd></div>
-      <div><dt>Status</dt><dd>Still working</dd></div>
-    </dl>
-  </article>
-
-  <footer class="about">
-    <div>
+  <footer class="contact" id="contact">
+    <div class="rv">
       <h2>Get in touch</h2>
       <p>I’m looking for a full-time role starting after April 2027, ideally designing, building or testing hardware.</p>
-      <p><a href="mailto:bpautler@bell.net">bpautler@bell.net</a> &nbsp;·&nbsp; <a href="https://www.linkedin.com/in/brandon-pautler">LinkedIn</a> &nbsp;·&nbsp; <a href="Brandon_Pautler_Resume.pdf">Résumé</a></p>
+      <p class="links"><a href="mailto:bpautler@bell.net">bpautler@bell.net</a><a href="https://www.linkedin.com/in/brandon-pautler">LinkedIn</a><a href="Brandon_Pautler_Resume.pdf">Résumé (PDF)</a></p>
     </div>
-    <div>
-      <h2>Outside of work</h2>
+    <div class="rv">
+      <p class="kicker">Outside of work</p>
       <p>Ice hockey, hiking, guitar, landscape oil painting, leatherworking and cooking.</p>
+      <small>© 2026 Brandon Pautler</small>
     </div>
   </footer>
 </main>
 
 <script>
-// Hide photo slots whose image file hasn't been added yet
-document.querySelectorAll('.photos img').forEach(function (img) {
-  function hide() { img.closest('figure').classList.add('missing'); }
-  if (img.complete && img.naturalWidth === 0) hide();
-  img.addEventListener('error', hide);
-});
-
-// Draw the LED board
 (function () {
-  var NS = 'http://www.w3.org/2000/svg';
-  var svg = document.getElementById('board');
-  function el(name, attrs, parent) {
-    var e = document.createElementNS(NS, name);
-    for (var k in attrs) e.setAttribute(k, attrs[k]);
-    (parent || svg).appendChild(e);
-    return e;
-  }
-  var cx = 200, cy = 200;
-  el('rect', { x: 20, y: 30, width: 360, height: 340, rx: 14, class: 'pcb' });
-  [[44, 54], [356, 54], [44, 346], [356, 346]].forEach(function (p) {
-    el('circle', { cx: p[0], cy: p[1], r: 8, class: 'hole' });
-  });
-  // Microcontroller and a few traces
-  el('rect', { x: 320, y: 300, width: 24, height: 24, class: 'chip' });
-  for (var i = 0; i < 4; i++) {
-    var o = 324 + i * 5.3;
-    el('line', { x1: o, y1: 324, x2: o, y2: 328, class: 'pin' });
-    el('line', { x1: 344, y1: 304 + i * 5.3, x2: 348, y2: 304 + i * 5.3, class: 'pin' });
-  }
-  el('path', { d: 'M348 304 H368', class: 'trace' });
-  el('path', { d: 'M348 309.3 H368', class: 'trace' });
-  el('path', { d: 'M324 328 V362', class: 'trace' });
-  el('path', { d: 'M329.3 328 V362', class: 'trace' });
-
-  // Concentric rings of LEDs: [radius in board units, LED count], from the real layout
-  var rings = [[0, 1], [3.0, 8], [6.0, 12], [9.5, 16], [13.0, 24], [16.8, 36], [20.8, 48]];
-  var scale = 7.1, leds = [];
-  rings.forEach(function (r) {
-    for (var n = 0; n < r[1]; n++) {
-      var a = (n / r[1]) * Math.PI * 2 - Math.PI / 2;
-      var x = cx + r[0] * scale * Math.cos(a), y = cy + r[0] * scale * Math.sin(a);
-      leds.push(el('rect', { x: (x - 3.6).toFixed(1), y: (y - 3.6).toFixed(1), width: 7.2, height: 7.2, rx: 1, class: 'led' }));
-    }
-  });
-
-  // Annotation in red pen, like a markup on a drawing
-  el('circle', { cx: 318, cy: 128, r: 3, class: 'anno-line' });
-  el('path', { d: 'M320 126 L394 82 H452', class: 'anno-line' });
-  var t = el('text', { x: 396, y: 76, class: 'anno' }); t.textContent = 'Ring layout';
-  el('path', { d: 'M346 320 L394 352 H452', class: 'anno-line' });
-  var t2 = el('text', { x: 396, y: 346, class: 'anno' }); t2.textContent = 'STM32';
-
+  'use strict';
+  document.documentElement.classList.add('js');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduce) { leds[0].classList.add('on'); return; }
-  var k = 0, timer = null;
-  function step() {
-    leds[(k + leds.length - 1) % leds.length].classList.remove('on');
-    leds[k].classList.add('on');
-    k = (k + 1) % leds.length;
+
+  // ---------- Photos: hide or placeholder anything not uploaded yet ----------
+  document.querySelectorAll('.extra img').forEach(function (img) {
+    function hide() { img.closest('figure').classList.add('missing'); }
+    if (img.complete && img.naturalWidth === 0) hide();
+    img.addEventListener('error', hide);
+  });
+  document.querySelectorAll('.frame img').forEach(function (img) {
+    function miss() { img.closest('.frame').classList.add('missing'); }
+    if (img.complete && img.naturalWidth === 0) miss();
+    img.addEventListener('error', miss);
+  });
+
+  // ---------- Reveal on scroll ----------
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.rv').forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll('.rv').forEach(function (el) { el.classList.add('in'); });
   }
-  function start() { if (!timer) timer = setInterval(step, 70); }
-  function stop() { clearInterval(timer); timer = null; }
-  new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }).observe(svg);
+
+  // ---------- Helpers ----------
+  function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
+  function sat(x) { return clamp(x, 0, 1); }
+  function smooth(e0, e1, x) { var t = sat((x - e0) / (e1 - e0)); return t * t * (3 - 2 * t); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  // Palette: pink -> purple -> blue -> purple -> pink (cyclic)
+  var STOPS = [[255, 79, 191], [161, 92, 255], [61, 155, 255], [161, 92, 255], [255, 79, 191]];
+  function pal(t) {
+    t = ((t % 1) + 1) % 1;
+    var s = t * 4, i = Math.floor(s), f = s - i, a = STOPS[i], b = STOPS[i + 1];
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
+  }
+
+  // ---------- Canvas ----------
+  var cv = document.getElementById('scene');
+  var ctx = cv.getContext('2d');
+  var W = 0, H = 0, DPR = 1;
+  var metal, sheen, vignette, peg, tools, sprites = [], NSPR = 24, dot;
+
+  function mk(w, h) { var c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+
+  // Glow sprites, one per palette step
+  function buildSprites() {
+    sprites = [];
+    for (var i = 0; i < NSPR; i++) {
+      var c = pal(i / NSPR), s = mk(128, 128), g = s.getContext('2d');
+      var gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+      gr.addColorStop(0, 'rgba(255,255,255,1)');
+      gr.addColorStop(0.08, 'rgba(' + (c[0] + 255 >> 1) + ',' + (c[1] + 255 >> 1) + ',' + (c[2] + 255 >> 1) + ',0.9)');
+      gr.addColorStop(0.25, 'rgba(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ',0.45)');
+      gr.addColorStop(0.6, 'rgba(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ',0.1)');
+      gr.addColorStop(1, 'rgba(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ',0)');
+      g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+      sprites.push(s);
+    }
+    dot = mk(32, 32);
+    var g2 = dot.getContext('2d'), gr2 = g2.createRadialGradient(16, 16, 0, 16, 16, 16);
+    gr2.addColorStop(0, 'rgba(255,255,255,1)'); gr2.addColorStop(0.3, 'rgba(255,220,255,0.5)'); gr2.addColorStop(1, 'rgba(255,200,255,0)');
+    g2.fillStyle = gr2; g2.fillRect(0, 0, 32, 32);
+  }
+
+  // Seeded random so the brushed texture is stable across resizes
+  var seed = 7;
+  function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+
+  function buildTextures() {
+    var w = cv.width, h = cv.height;
+    seed = 7;
+    // Brushed gunmetal
+    metal = mk(w, h);
+    var g = metal.getContext('2d');
+    var base = g.createLinearGradient(0, 0, w, h);
+    base.addColorStop(0, '#2a2a33'); base.addColorStop(0.45, '#1d1d24'); base.addColorStop(0.55, '#24242c'); base.addColorStop(1, '#141419');
+    g.fillStyle = base; g.fillRect(0, 0, w, h);
+    // broad diagonal sheen
+    var sh = g.createLinearGradient(0, h * 0.1, w, h * 0.7);
+    sh.addColorStop(0.25, 'rgba(255,255,255,0)'); sh.addColorStop(0.42, 'rgba(210,205,235,0.07)'); sh.addColorStop(0.5, 'rgba(255,255,255,0.03)'); sh.addColorStop(0.62, 'rgba(255,255,255,0)');
+    g.fillStyle = sh; g.fillRect(0, 0, w, h);
+    // horizontal brushing
+    var n = Math.round(w * h / 260);
+    for (var i = 0; i < n; i++) {
+      var y = rnd() * h, x = rnd() * w * 1.2 - w * 0.1, len = 40 + rnd() * w * 0.5;
+      g.fillStyle = rnd() < 0.5 ? 'rgba(255,255,255,' + (0.012 + rnd() * 0.03) + ')' : 'rgba(0,0,0,' + (0.03 + rnd() * 0.05) + ')';
+      g.fillRect(x, y, len, DPR > 1.2 ? 1.5 : 1);
+    }
+    // Overlay that streaks every light drawn on top, like reflections in brushed metal
+    sheen = mk(w, h);
+    var s = sheen.getContext('2d');
+    s.fillStyle = '#808080'; s.fillRect(0, 0, w, h);
+    var m = Math.round(h * 2.2);
+    for (var j = 0; j < m; j++) {
+      var yy = rnd() * h;
+      s.fillStyle = rnd() < 0.5 ? 'rgba(255,255,255,' + (0.05 + rnd() * 0.12) + ')' : 'rgba(0,0,0,' + (0.05 + rnd() * 0.14) + ')';
+      s.fillRect(rnd() * w * 0.5 - w * 0.2, yy, w * (0.4 + rnd()), 1 + rnd() * DPR);
+    }
+    // Vignette
+    vignette = mk(w, h);
+    var v = vignette.getContext('2d');
+    var vg = v.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.hypot(w, h) * 0.62);
+    vg.addColorStop(0, 'rgba(8,8,12,0)'); vg.addColorStop(1, 'rgba(8,8,12,0.72)');
+    v.fillStyle = vg; v.fillRect(0, 0, w, h);
+    buildPegboard(w, h);
+  }
+
+  // Pegboard and tools for the bench scene
+  function buildPegboard(w, h) {
+    peg = mk(w, h);
+    var g = peg.getContext('2d'), u = DPR;
+    g.fillStyle = '#1f1e26'; g.fillRect(0, 0, w, h);
+    var sp = 26 * u, r = 3.2 * u;
+    for (var y = sp * 0.6; y < h; y += sp) {
+      for (var x = sp * 0.5; x < w; x += sp) {
+        g.fillStyle = 'rgba(255,255,255,0.06)';
+        g.beginPath(); g.arc(x, y + 0.9 * u, r, 0, 6.2832); g.fill();
+        g.fillStyle = '#0b0b0f';
+        g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill();
+      }
+    }
+    // a few tools hanging on the board (own layer so they leave with the bench)
+    tools = mk(w, h);
+    g = tools.getContext('2d');
+    function driver(x, y, len, col) {
+      g.fillStyle = '#9b99aa'; g.fillRect(x - 1.5 * u, y, 3 * u, len * 0.55);
+      g.fillStyle = col; roundRect(g, x - 6 * u, y - len * 0.45, 12 * u, len * 0.45, 5 * u); g.fill();
+      g.fillStyle = 'rgba(255,255,255,0.18)'; g.fillRect(x - 3 * u, y - len * 0.42, 2 * u, len * 0.38);
+      g.fillStyle = '#55535f'; g.fillRect(x - 9 * u, y - len * 0.5, 18 * u, 4 * u);
+    }
+    var cols = ['#c23d93', '#7b47c9', '#2f74c2', '#9a4fd6'];
+    var right = w * 0.94, top = h * 0.2;
+    for (var i = 0; i < 4; i++) driver(right - i * 30 * u, top + 40 * u, 120 * u, cols[i]);
+    // spool of solder on a peg
+    var sx = right - 165 * u, sy = top + 10 * u;
+    g.strokeStyle = '#8f8d9e'; g.lineWidth = 9 * u; g.beginPath(); g.arc(sx, sy, 20 * u, 0, 6.2832); g.stroke();
+    g.strokeStyle = '#c9c7d6'; g.lineWidth = 2 * u; g.beginPath(); g.arc(sx, sy, 24 * u, 0, 6.2832); g.stroke();
+    g.fillStyle = '#0b0b0f'; g.beginPath(); g.arc(sx, sy, 6 * u, 0, 6.2832); g.fill();
+  }
+  function roundRect(g, x, y, w, h, r) {
+    g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+  }
+
+  // ---------- LED board layout (the real ring layout) ----------
+  var RINGS = [[0, 1], [3.0, 8], [6.0, 12], [9.5, 16], [13.0, 24], [16.8, 36], [20.8, 48]];
+  var leds = [];
+  (function () {
+    var idx = 0;
+    RINGS.forEach(function (r, ri) {
+      for (var n = 0; n < r[1]; n++) {
+        var a = (n / r[1]) * Math.PI * 2 - Math.PI / 2;
+        leds.push({ x: r[0] * Math.cos(a), y: r[0] * Math.sin(a), rn: r[0] / 20.8, ring: ri, ang: a, order: idx++, b: 0 });
+      }
+    });
+    // Light order: centre outward, sweeping round each ring
+    leds.forEach(function (l, i) { l.th = (i + 1) / leds.length; });
+  })();
+
+  // ---------- Solenoid field lines (computed once) ----------
+  function ellipKE(m) {
+    var a = 1, g = Math.sqrt(1 - m), sum = 0.5 * m, p = 0.5;
+    for (var i = 0; i < 24; i++) {
+      var c = (a - g) / 2, an = (a + g) / 2; g = Math.sqrt(a * g); a = an; p *= 2; sum += p * c * c;
+      if (c < 1e-12) break;
+    }
+    var K = Math.PI / (2 * a);
+    return [K, K * (1 - sum)];
+  }
+  var COIL_L = 2.6, NLOOP = 18, LOOPZ = [];
+  for (var li = 0; li < NLOOP; li++) LOOPZ.push(-COIL_L / 2 + COIL_L * li / (NLOOP - 1));
+  function field(rho, z) {
+    var Br = 0, Bz = 0;
+    for (var i = 0; i < NLOOP; i++) {
+      var zz = z - LOOPZ[i], r2 = rho * rho + zz * zz;
+      var al2 = 1 + r2 - 2 * rho, be2 = 1 + r2 + 2 * rho, be = Math.sqrt(be2);
+      var ke = ellipKE(1 - al2 / be2), K = ke[0], E = ke[1];
+      Bz += ((1 - r2) * E + al2 * K) / (2 * al2 * be);
+      if (rho > 1e-6) Br += zz * ((1 + r2) * E - al2 * K) / (2 * al2 * be * rho);
+    }
+    return [Br, Bz];
+  }
+  function dir(r, z, s) { var b = field(r, z), n = Math.hypot(b[0], b[1]) || 1; return [s * b[0] / n, s * b[1] / n]; }
+  function trace(r0, sgn) {
+    var pts = [[r0, 0]], r = r0, z = 0, LIM = 34;
+    for (var i = 0; i < 6000; i++) {
+      var h = 0.03 * (1 + Math.hypot(r, z) / 1.6);
+      var k1 = dir(r, z, sgn), k2 = dir(r + k1[0] * h / 2, z + k1[1] * h / 2, sgn);
+      var k3 = dir(r + k2[0] * h / 2, z + k2[1] * h / 2, sgn), k4 = dir(r + k3[0] * h, z + k3[1] * h, sgn);
+      var nr = r + h * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]) / 6, nz = z + h * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]) / 6;
+      if (nr < 0) nr = -nr;
+      var closed = i > 20 && z < 0 && nz >= 0 && nr < 1;
+      r = nr; z = nz; pts.push([r, z]);
+      if (closed) return { pts: pts, closed: true };
+      if (r > LIM || Math.abs(z) > LIM) break;
+    }
+    return { pts: pts, closed: false };
+  }
+  function thin(p, n) { if (p.length <= n) return p; var o = [], st = (p.length - 1) / (n - 1); for (var i = 0; i < n; i++) o.push(p[Math.round(i * st)]); return o; }
+  var SEEDS = [0.14, 0.34, 0.54, 0.7, 0.84], fieldLines = [];
+  SEEDS.forEach(function (s0) {
+    var f = trace(s0, 1), b = f.closed ? { pts: [[s0, 0]] } : trace(s0, -1);
+    fieldLines.push({ f: thin(f.pts, 260), b: thin(b.pts, 200), len: f.pts.length + b.pts.length });
+  });
+  var AZ = 8;
+
+  // ---------- Scroll metrics ----------
+  var els = {
+    micro: document.getElementById('micro'), b1: document.getElementById('bridge1'), mri: document.getElementById('mri'),
+    b2: document.getElementById('bridge2'), bench: document.getElementById('bench'), stage: document.querySelector('.stage')
+  };
+  var M = {};
+  function top(el) { var t = 0; while (el) { t += el.offsetTop; el = el.offsetParent; } return t; }
+  function measure() {
+    var vh = window.innerHeight;
+    M.vh = vh;
+    M.ledFull = top(els.micro) + els.micro.offsetHeight * 0.5 - vh * 0.5;
+    M.t1a = top(els.b1) - vh * 0.55; M.t1b = top(els.b1) + els.b1.offsetHeight - vh * 0.45;
+    M.t2a = top(els.b2) - vh * 0.6; M.t2b = top(els.b2) + els.b2.offsetHeight - vh * 0.5;
+    M.bA = top(els.bench); M.bB = M.bA + els.bench.offsetHeight - vh;
+    M.wide = window.innerWidth > 900;
+  }
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+    var w = cv.clientWidth, h = cv.clientHeight;
+    var nw = Math.round(w * DPR), nh = Math.round(h * DPR);
+    if (nw !== cv.width || Math.abs(nh - cv.height) > 140 * DPR || !metal) {
+      cv.width = nw; cv.height = nh; W = w; H = h;
+      buildTextures();
+    }
+    measure();
+  }
+
+  // ---------- Drawing ----------
+  var t0 = performance.now(), last = t0, rot = 0;
+  var benchVars = { drop: -1, rise: -1, lamp: -1, place: -1, txt: -1 };
+  var stageStyle = els.stage.style, rootStyle = document.documentElement.style;
+
+  function frame(now) {
+    var dt = Math.min(0.05, (now - last) / 1000); last = now;
+    var time = (now - t0) / 1000;
+    var y = window.scrollY, w = cv.width, h = cv.height, u = DPR;
+    var mn = Math.min(w, h);
+
+    // Phases
+    var pLed = sat(y / Math.max(1, M.ledFull));
+    var m = smooth(M.t1a, M.t1b, y);          // microscope -> MRI
+    var fo = smooth(M.t2a, M.t2b, y);         // MRI -> bench
+    var bp = sat((y - M.bA) / Math.max(1, M.bB - M.bA)); // bench assembly
+    var drop = smooth(0.0, 0.3, bp), rise = smooth(0.12, 0.42, bp);
+    var lampOn = 0;
+    if (bp > 0.36) {
+      lampOn = smooth(0.36, 0.5, bp);
+      if (!reduce && bp < 0.5) { var fl = Math.sin(bp * 520) + Math.sin(bp * 1310); lampOn *= fl > 0.6 ? 1 : 0.15; }
+    }
+    if (y < M.t2a) lampOn = 0;
+    var place = smooth(0.48, 0.66, bp), txt = smooth(0.55, 0.72, bp);
+    setVar('drop', drop); setVar('rise', rise); setVar('lamp', lampOn); setVar('place', place); setVar('txt', txt);
+    rootStyle.setProperty('--bar', y > M.vh * 0.6 ? 1 : 0);
+
+    // Base metal
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    ctx.drawImage(metal, 0, 0);
+
+    // Pegboard fades in for the bench
+    var past = Math.max(0, y - M.bB) * u; // stage has unstuck and is scrolling away
+    if (fo > 0) {
+      ctx.globalAlpha = fo; ctx.drawImage(peg, 0, 0);
+      if (M.wide) ctx.drawImage(tools, 0, -past);
+      ctx.globalAlpha = 1;
+    }
+
+    // ----- LED board -----
+    var boardA = 1 - smooth(0.0, 0.75, m);
+    var R = Math.max(0.45 * mn, 0.34 * Math.max(w, h));
+    var sc = R / 20.8, ls = Math.max(5 * u, sc * 0.72);
+    var cx = w / 2, cy = h / 2;
+    var litSum = 0;
+    if (boardA > 0.001) {
+      // etched rings
+      ctx.strokeStyle = 'rgba(200,190,230,' + (0.07 * boardA) + ')';
+      ctx.lineWidth = 1 * u;
+      for (var ri = 1; ri < RINGS.length; ri++) { ctx.beginPath(); ctx.arc(cx, cy, RINGS[ri][0] * sc, 0, 6.2832); ctx.stroke(); }
+      // unlit packages
+      ctx.globalAlpha = boardA;
+      for (var i = 0; i < leds.length; i++) {
+        var L = leds[i], lx = cx + L.x * sc, ly = cy + L.y * sc;
+        ctx.fillStyle = '#121218'; ctx.fillRect(lx - ls / 2 - u, ly - ls / 2 - u, ls + 2 * u, ls + 2 * u);
+        ctx.fillStyle = '#34343f'; ctx.fillRect(lx - ls / 2, ly - ls / 2, ls, ls);
+        ctx.fillStyle = '#4a4a57'; ctx.fillRect(lx - ls * 0.28, ly - ls * 0.28, ls * 0.56, ls * 0.56);
+      }
+      ctx.globalAlpha = 1;
+    }
+    // brightness per LED: on in order with scroll, off outer-first on the way to the MRI
+    var k = Math.min(1, dt * (reduce ? 60 : 9));
+    for (var j = 0; j < leds.length; j++) {
+      var Lj = leds[j];
+      var on = pLed >= Lj.th && m < 0.62 * (1 - Lj.rn) + 0.04;
+      Lj.b += ((on ? 1 : 0) - Lj.b) * k;
+      if (Lj.b < 0.002) Lj.b = 0;
+      litSum += Lj.b;
+    }
+    if (litSum > 0) {
+      ctx.globalCompositeOperation = 'lighter';
+      var hue = reduce ? 0 : time * 0.035;
+      for (var q = 0; q < leds.length; q++) {
+        var Q = leds[q]; if (!Q.b) continue;
+        var px = cx + Q.x * sc, py = cy + Q.y * sc;
+        var tcol = Q.ang / 6.2832 + Q.ring * 0.11 + hue;
+        var spr = sprites[((Math.floor((((tcol % 1) + 1) % 1) * NSPR)) % NSPR)];
+        var flick = reduce ? 1 : 0.9 + 0.1 * Math.sin(time * 3 + q * 1.7);
+        var bb = Q.b * flick;
+        var hs = ls * 9;
+        ctx.globalAlpha = 0.55 * bb; ctx.drawImage(spr, px - hs / 2, py - hs / 2, hs, hs);
+        // anisotropic smear: brushed metal stretches highlights across the grain
+        ctx.globalAlpha = 0.4 * bb; ctx.drawImage(spr, px - ls * 1.3, py - ls * 12, ls * 2.6, ls * 24);
+        ctx.globalAlpha = 0.9 * bb; ctx.drawImage(spr, px - ls * 1.4, py - ls * 1.4, ls * 2.8, ls * 2.8);
+      }
+      // ambient wash bouncing off the whole plate
+      var frac = litSum / leds.length;
+      var amb = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.5);
+      amb.addColorStop(0, 'rgba(170,90,255,' + (0.22 * frac) + ')');
+      amb.addColorStop(0.5, 'rgba(255,80,190,' + (0.08 * frac) + ')');
+      amb.addColorStop(1, 'rgba(60,150,255,0)');
+      ctx.globalAlpha = 1; ctx.fillStyle = amb; ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // ----- Solenoid field -----
+    var grow = smooth(0.3, 1, m) * (1 - smooth(0, 0.7, fo));
+    var coilA = smooth(0.2, 0.55, m) * (1 - smooth(0.2, 0.8, fo));
+    if (grow > 0.001 || coilA > 0.001) {
+      var S = mn * (M.wide ? 0.08 : 0.075);
+      var fcx = M.wide ? lerp(w / 2, w * 0.72, smooth(0.4, 1, m)) : w / 2, fcy = h / 2;
+      if (!reduce) rot += dt * 0.12;
+      var tilt = 0.32, ct = Math.cos(tilt), st = Math.sin(tilt);
+      var grad = ctx.createLinearGradient(0, fcy - 7 * S, 0, fcy + 7 * S);
+      grad.addColorStop(0, 'rgb(255,79,191)'); grad.addColorStop(0.5, 'rgb(161,92,255)'); grad.addColorStop(1, 'rgb(61,155,255)');
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      var proj = function (r, z, ca, sa) { var d = r * sa; return [fcx + r * ca * S, fcy - (z * ct - d * st) * S]; };
+      for (var a = 0; a < AZ; a++) {
+        var phi = rot + a * 6.2832 / AZ, ca = Math.cos(phi), sa = Math.sin(phi);
+        var depth = 0.35 + 0.65 * (0.5 + 0.5 * sa);
+        ctx.beginPath();
+        for (var fl2 = 0; fl2 < fieldLines.length; fl2++) {
+          var FL = fieldLines[fl2];
+          [FL.f, FL.b].forEach(function (P) {
+            var nShow = Math.floor(P.length * grow);
+            if (nShow < 2) return;
+            var p0 = proj(P[0][0], P[0][1], ca, sa); ctx.moveTo(p0[0], p0[1]);
+            for (var pi = 1; pi < nShow; pi++) { var pp = proj(P[pi][0], P[pi][1], ca, sa); ctx.lineTo(pp[0], pp[1]); }
+          });
+        }
+        ctx.strokeStyle = grad;
+        ctx.globalAlpha = 0.07 * depth * grow; ctx.lineWidth = 9 * u; ctx.stroke();
+        ctx.globalAlpha = 0.22 * depth * grow; ctx.lineWidth = 3.2 * u; ctx.stroke();
+        ctx.globalAlpha = 0.85 * depth * grow; ctx.lineWidth = 1.1 * u; ctx.stroke();
+      }
+      // particles flowing along the lines
+      if (!reduce && grow > 0.95) {
+        ctx.globalAlpha = 0.9 * grow;
+        for (var a2 = 0; a2 < AZ; a2++) {
+          var phi2 = rot + a2 * 6.2832 / AZ, ca2 = Math.cos(phi2), sa2 = Math.sin(phi2);
+          for (var f3 = 0; f3 < fieldLines.length; f3++) {
+            var Pf = fieldLines[f3].f, Pb = fieldLines[f3].b;
+            var total = Pf.length + Pb.length;
+            var tt = ((time * 0.06 + a2 * 0.13 + f3 * 0.29) % 1) * total;
+            var pt = tt < Pf.length ? Pf[Math.floor(tt)] : Pb[Pb.length - 1 - Math.floor(tt - Pf.length)];
+            if (!pt) continue;
+            var dp = proj(pt[0], pt[1], ca2, sa2), ds = 14 * u * (0.6 + 0.4 * (0.5 + 0.5 * sa2));
+            ctx.drawImage(dot, dp[0] - ds / 2, dp[1] - ds / 2, ds, ds);
+          }
+        }
+      }
+      // the coil itself
+      if (coilA > 0.001) {
+        ctx.globalAlpha = coilA;
+        for (var c = 0; c < NLOOP; c++) {
+          var cz = fcy - LOOPZ[c] * ct * S;
+          ctx.strokeStyle = 'rgba(255,200,240,0.18)'; ctx.lineWidth = 6 * u;
+          ctx.beginPath(); ctx.ellipse(fcx, cz, S * 1.02, S * st, 0, 0, 6.2832); ctx.stroke();
+          ctx.strokeStyle = 'rgba(240,225,255,0.85)'; ctx.lineWidth = 1.4 * u;
+          ctx.beginPath(); ctx.ellipse(fcx, cz, S * 1.02, S * st, 0, 0, 6.2832); ctx.stroke();
+        }
+        var core = ctx.createRadialGradient(fcx, fcy, 0, fcx, fcy, S * 3);
+        core.addColorStop(0, 'rgba(200,140,255,0.35)'); core.addColorStop(1, 'rgba(120,80,255,0)');
+        ctx.fillStyle = core; ctx.fillRect(fcx - S * 3, fcy - S * 3, S * 6, S * 6);
+      }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // ----- Bench lamp light on the pegboard -----
+    if (fo > 0 && lampOn > 0) {
+      var lampY = (-60 + drop * (60 + 0.09 * M.vh)) * u + 24 * u - past;
+      ctx.globalCompositeOperation = 'lighter';
+      var lg = ctx.createRadialGradient(w / 2, lampY, 0, w / 2, lampY, Math.max(w, h) * 0.7);
+      lg.addColorStop(0, 'rgba(235,215,255,' + (0.3 * lampOn) + ')');
+      lg.addColorStop(0.35, 'rgba(170,110,255,' + (0.12 * lampOn) + ')');
+      lg.addColorStop(1, 'rgba(60,120,255,0)');
+      ctx.fillStyle = lg; ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // Brushed streaks over everything, then vignette
+    ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = 0.5;
+    ctx.drawImage(sheen, 0, 0);
+    ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+    ctx.drawImage(vignette, 0, 0);
+
+    requestAnimationFrame(frame);
+  }
+  function setVar(name, v) {
+    v = Math.round(v * 1000) / 1000;
+    if (benchVars[name] === v) return;
+    benchVars[name] = v; stageStyle.setProperty('--' + name, v);
+  }
+
+  var rt;
+  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(resize, 120); });
+  window.addEventListener('load', measure);
+  if ('ResizeObserver' in window) new ResizeObserver(function () { measure(); }).observe(document.body);
+  buildSprites();
+  resize();
+  requestAnimationFrame(frame);
 })();
 </script>
 </body>
